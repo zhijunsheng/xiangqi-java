@@ -2,6 +2,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.imageio.ImageIO;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -47,11 +49,13 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   private int pickedPieceY;
 
   private Set<XiangqiPiece> pieces;
+  private Map<String, BufferedImage> keyNameValueImage;
 
   XiangqiPanel(Set<XiangqiPiece> pieces) {
     this.pieces = pieces;
     addMouseListener(this);
     addMouseMotionListener(this);
+    keyNameValueImage = new HashMap<String, BufferedImage>();
   }
 
   // MouseListener
@@ -100,6 +104,21 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
   }
 
+  private BufferedImage getPieceImage(String imgName) {
+    BufferedImage img = keyNameValueImage.get(imgName);
+    if (img == null) {
+      try {
+        String path = imgName + ".png";
+        File file = new File(path);
+        img = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
+        keyNameValueImage.put(imgName, img);
+      } catch(IOException ioe) {
+        System.out.println("failed to load image " + imgName);
+      }
+    }
+    return img;
+  }
+
   private BufferedImage resize(BufferedImage img, int width, int height) {
     Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
     BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -111,15 +130,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
 
   private void drawPieces(Graphics g) {
     for(XiangqiPiece piece: pieces) {
-
-    try {
-      String path = piece.imgName + ".png";
-      File file = new File(path);
-      BufferedImage image = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
-      g.drawImage(image, ORIGIN_X + CELL_WIDTH * piece.x - (int)(0.5 * CELL_WIDTH), ORIGIN_Y + CELL_HEIGHT * piece.y - (int)(0.5 * CELL_HEIGHT), this);
-    } catch(IOException ioe) {
-      System.out.println("failed to load images");
-    }
+      g.drawImage(getPieceImage(piece.imgName), ORIGIN_X + CELL_WIDTH * piece.x - (int)(0.5 * CELL_WIDTH), ORIGIN_Y + CELL_HEIGHT * piece.y - (int)(0.5 * CELL_HEIGHT), this);
     }
   }
 
