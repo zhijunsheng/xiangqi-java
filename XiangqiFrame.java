@@ -47,6 +47,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   private BufferedImage pickedPieceImage;
   private int pickedPieceX;
   private int pickedPieceY;
+  private Point logicalFrom;
 
   private XiangqiEngine xiangqiEngine;
   private Map<String, BufferedImage> keyNameValueImage;
@@ -64,21 +65,25 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   public void mouseEntered(MouseEvent me) {}
   public void mouseExited(MouseEvent me) {}
 
+  private Point screenToLogical(Point screenPoint) {
+    return new Point((int)((screenPoint.x - ORIGIN_X + 0.5 * CELL_WIDTH) / CELL_WIDTH), (int)((screenPoint.y - ORIGIN_Y + 0.5 * CELL_HEIGHT) / CELL_HEIGHT));  
+  }
+
   public void mousePressed(MouseEvent me) {
-    Point p = me.getPoint();
-    int col = (int)((p.x - ORIGIN_X + 0.5 * CELL_WIDTH) / CELL_WIDTH);  
-    int row = (int)((p.y - ORIGIN_Y + 0.5 * CELL_HEIGHT) / CELL_HEIGHT);  
-    System.out.println(p + " col=" + col + " row=" + row);
-    XiangqiPiece pickedPiece = xiangqiEngine.pieceAt(col, row);
+    Point p = screenToLogical(me.getPoint());
+    XiangqiPiece pickedPiece = xiangqiEngine.pieceAt(p.x, p.y);
     if (pickedPiece != null) {
+      logicalFrom = p;
       pickedPieceImage = getPieceImage(pickedPiece.imgName); 
     }
   }
 
   public void mouseReleased(MouseEvent me) {
-    Point p = me.getPoint();
+    Point p = screenToLogical(me.getPoint());
     System.out.println(p);
     pickedPieceImage = null;
+    xiangqiEngine.move(logicalFrom, p);
+    repaint();
   }
 
   // MouseMotionListener
@@ -94,9 +99,6 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-
-//    g.setColor(Color.white);
- //   g.fillRect(41, 17, 400, 550);
 
     g.setColor(Color.black);
     drawGrid(g);
@@ -176,6 +178,16 @@ class XiangqiEngine {
 
   Set<XiangqiPiece> getPieces() {
     return pieces;
+  }
+
+  void move(Point from, Point to) {
+    XiangqiPiece piece = pieceAt(from.x, from.y);
+    if (piece == null) {
+      return;
+    }
+    pieces.remove(piece);
+    addPiece(to.x, to.y, piece.rank, piece.isRed, piece.imgName);
+    System.out.println(pieces.size());
   }
 
   private void addInitialPieces() {
