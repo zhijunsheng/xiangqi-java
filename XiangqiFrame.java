@@ -19,6 +19,16 @@ class XiangqiFrame extends JFrame {
   }
 }
 
+enum Rank {
+  PAWN,
+  CANNON,
+  GUARD,
+  BISHIP,
+  KNIGHT,
+  ROOK,
+  KING
+}
+
 class XiangqiEngine {
   final static int ROWS = 10;
   final static int COLS = 9;
@@ -35,7 +45,7 @@ class XiangqiEngine {
       XiangqiPiece pawn = new XiangqiPiece();
       pawn.x = 2 * i;
       pawn.y = 3;
-      pawn.rank = 0;
+      pawn.rank = Rank.PAWN;
       pawn.isRed = true;
       pieces.add(pawn);
     }
@@ -49,8 +59,10 @@ class XiangqiEngine {
         if (piece == null) {
           brdStr += " .";
         } else {
-          if (piece.rank == 0) {
-            brdStr += " p";
+          switch (piece.rank) {
+            case PAWN:
+              brdStr += " p";
+              break;
           }
         }
       }
@@ -74,6 +86,6 @@ class XiangqiEngine {
 class XiangqiPiece {
   int x;
   int y;
-  int rank;
+  Rank rank;
   boolean isRed;
 }
