@@ -1,9 +1,13 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 class XiangqiFrame extends JFrame {
 
@@ -20,24 +24,39 @@ class XiangqiFrame extends JFrame {
 
     XiangqiFrame xiangqiFrame = new XiangqiFrame();
     XiangqiPanel xiangqiPanel = new XiangqiPanel();
-    xiangqiFrame.getContentPane().add(xiangqiPanel);
+    xiangqiFrame.getContentPane().add(xiangqiPanel, BorderLayout.CENTER);
     xiangqiFrame.setVisible(true);
   }
 }
 
 class XiangqiPanel extends JPanel {
-  final static int ORIGIN_X = 20;
-  final static int ORIGIN_Y = 30;
-  final static int CELL_WIDTH = 23;
-  final static int CELL_HEIGHT = 31;
+  final static int ORIGIN_X = 29;
+  final static int ORIGIN_Y = 31;
+  final static int CELL_WIDTH = 43;
+  final static int CELL_HEIGHT = 53;
+
+  XiangqiPanel() {
+  }
   
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     g.setColor(Color.white);
-    g.fillRect(10, 10, 400, 500);
+    g.fillRect(10, 10, 400, 550);
 
     g.setColor(Color.black);
     drawGrid(g);
+    
+    try {
+      String path = "bb.png";
+      File file = new File(path);
+      BufferedImage image = ImageIO.read(file);
+      g.drawImage(image, 100, 100, this);
+    } catch(IOException ioe) {
+      System.out.println("failed to load images");
+    }
+  }
+
+  private void loadImages() {
   }
 
   private void drawGrid(Graphics g) {
