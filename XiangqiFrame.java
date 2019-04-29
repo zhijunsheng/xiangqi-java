@@ -42,13 +42,26 @@ class XiangqiEngine {
 
   private void addInitialPieces() {
     for (int i = 0; i < 5; i++) {
-      XiangqiPiece pawn = new XiangqiPiece();
-      pawn.x = 2 * i;
-      pawn.y = 3;
-      pawn.rank = Rank.PAWN;
-      pawn.isRed = true;
-      pieces.add(pawn);
+      pieces.add(new XiangqiPiece(2 * i, 3, Rank.PAWN, true));
+      pieces.add(new XiangqiPiece(2 * i, 6, Rank.PAWN, false));
     }
+
+    for (int i = 0; i < 2; i++) {
+      pieces.add(new XiangqiPiece(8 * i, 0, Rank.ROOK, true));
+      pieces.add(new XiangqiPiece(8 * i, 9, Rank.ROOK, false));
+      pieces.add(new XiangqiPiece(1 + 6 * i, 0, Rank.KNIGHT, true));
+      pieces.add(new XiangqiPiece(1 + 6 * i, 9, Rank.KNIGHT, false));
+      pieces.add(new XiangqiPiece(2 + 4 * i, 0, Rank.BISHIP, true));
+      pieces.add(new XiangqiPiece(2 + 4 * i, 9, Rank.BISHIP, false));
+      pieces.add(new XiangqiPiece(3 + 2 * i, 0, Rank.GUARD, true));
+      pieces.add(new XiangqiPiece(3 + 2 * i, 9, Rank.GUARD, false));
+      pieces.add(new XiangqiPiece(1 + 6 * i, 2, Rank.CANNON, true));
+      pieces.add(new XiangqiPiece(1 + 6 * i, 7, Rank.CANNON, false));
+    }
+    
+    pieces.add(new XiangqiPiece(4, 0, Rank.KING, true));
+    pieces.add(new XiangqiPiece(4, 9, Rank.KING, false));
+
   }
 
   public String toString() {
@@ -60,9 +73,13 @@ class XiangqiEngine {
           brdStr += " .";
         } else {
           switch (piece.rank) {
-            case PAWN:
-              brdStr += " p";
-              break;
+            case PAWN: brdStr += piece.isRed ? " P" : " p"; break;
+            case CANNON: brdStr += piece.isRed ? " C" : " c"; break;
+            case GUARD: brdStr += piece.isRed ? " G" : " g"; break;
+            case BISHIP: brdStr += piece.isRed ? " B" : " b"; break;
+            case KNIGHT: brdStr += piece.isRed ? " N" : " n"; break;
+            case ROOK: brdStr += piece.isRed ? " R" : " r"; break;
+            case KING: brdStr += piece.isRed ? " K" : " k"; break;
           }
         }
       }
@@ -88,4 +105,11 @@ class XiangqiPiece {
   int y;
   Rank rank;
   boolean isRed;
+
+  XiangqiPiece(int x, int y, Rank rank, boolean isRed) {
+    this.x = x;
+    this.y = y;
+    this.rank = rank;
+    this.isRed = isRed;
+  }
 }
