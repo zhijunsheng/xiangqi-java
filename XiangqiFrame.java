@@ -3,9 +3,13 @@ import javax.swing.JPanel;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -29,17 +33,50 @@ class XiangqiFrame extends JFrame {
   }
 }
 
-class XiangqiPanel extends JPanel {
+class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener {
   final static int ORIGIN_X = 29;
   final static int ORIGIN_Y = 31;
   final static int CELL_WIDTH = 43;
   final static int CELL_HEIGHT = 53;
 
+  private BufferedImage pickedPieceImage;
+  private int pickedPieceX;
+  private int pickedPieceY;
+
   XiangqiPanel() {
+    addMouseListener(this);
+    addMouseMotionListener(this);
   }
+
+  // MouseListener
+  
+  public void mouseClicked(MouseEvent me) {}
+  public void mouseEntered(MouseEvent me) {}
+  public void mouseExited(MouseEvent me) {}
+  public void mousePressed(MouseEvent me) {
+    Point p = me.getPoint();
+    System.out.println(p);
+  }
+  
+  public void mouseReleased(MouseEvent me) {
+    Point p = me.getPoint();
+    System.out.println(p);
+  }
+
+  // MouseMotionListener
+  
+  public void mouseDragged(MouseEvent me) {
+    Point p = me.getPoint();
+    pickedPieceX = p.x;
+    pickedPieceY = p.y;
+    repaint();
+  }
+
+  public void mouseMoved(MouseEvent me) {}
   
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
+
     g.setColor(Color.white);
     g.fillRect(10, 10, 400, 550);
 
@@ -50,7 +87,7 @@ class XiangqiPanel extends JPanel {
       String path = "bb.png";
       File file = new File(path);
       BufferedImage image = ImageIO.read(file);
-      g.drawImage(image, 100, 100, this);
+      g.drawImage(image, pickedPieceX, pickedPieceY, this);
     } catch(IOException ioe) {
       System.out.println("failed to load images");
     }
