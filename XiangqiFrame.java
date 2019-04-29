@@ -93,15 +93,6 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     g.setColor(Color.black);
     drawGrid(g);
     drawPieces(g);
-    
-    try {
-      String path = "bb.png";
-      File file = new File(path);
-      BufferedImage image = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
-      g.drawImage(image, pickedPieceX, pickedPieceY, this);
-    } catch(IOException ioe) {
-      System.out.println("failed to load images");
-    }
   }
 
   private BufferedImage getPieceImage(String imgName) {
@@ -132,9 +123,6 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     for(XiangqiPiece piece: pieces) {
       g.drawImage(getPieceImage(piece.imgName), ORIGIN_X + CELL_WIDTH * piece.x - (int)(0.5 * CELL_WIDTH), ORIGIN_Y + CELL_HEIGHT * piece.y - (int)(0.5 * CELL_HEIGHT), this);
     }
-  }
-
-  private void loadImages() {
   }
 
   private void drawGrid(Graphics g) {
