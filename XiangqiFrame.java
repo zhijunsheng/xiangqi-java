@@ -1,5 +1,9 @@
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import java.util.ArrayList;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Dimension;
 
 class XiangqiFrame extends JFrame {
 
@@ -15,7 +19,42 @@ class XiangqiFrame extends JFrame {
     System.out.println(xiangqiEngine);   
 
     XiangqiFrame xiangqiFrame = new XiangqiFrame();
+    XiangqiPanel xiangqiPanel = new XiangqiPanel();
+    xiangqiFrame.getContentPane().add(xiangqiPanel);
     xiangqiFrame.setVisible(true);
+  }
+}
+
+class XiangqiPanel extends JPanel {
+  final static int ORIGIN_X = 20;
+  final static int ORIGIN_Y = 30;
+  final static int CELL_WIDTH = 23;
+  final static int CELL_HEIGHT = 31;
+  
+  public void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.setColor(Color.white);
+    g.fillRect(10, 10, 400, 500);
+
+    g.setColor(Color.black);
+    drawGrid(g);
+  }
+
+  private void drawGrid(Graphics g) {
+    for (int i = 0; i < XiangqiEngine.COLS; i++) {
+      g.drawLine(ORIGIN_X + i * CELL_WIDTH, ORIGIN_Y, ORIGIN_X + i * CELL_WIDTH, ORIGIN_Y + 4 * CELL_HEIGHT); 
+      g.drawLine(ORIGIN_X + i * CELL_WIDTH, ORIGIN_Y + 5 * CELL_HEIGHT, ORIGIN_X + i * CELL_WIDTH, ORIGIN_Y + (XiangqiEngine.ROWS - 1) * CELL_HEIGHT); 
+    }
+
+    for (int i = 0; i < XiangqiEngine.ROWS; i++) {
+      g.drawLine(ORIGIN_X, ORIGIN_Y + i * CELL_HEIGHT, ORIGIN_X + (XiangqiEngine.COLS - 1) * CELL_WIDTH, ORIGIN_Y + i * CELL_HEIGHT); 
+    }
+
+    for (int i = 0; i < 2; i++) {
+      g.drawLine(ORIGIN_X + 3 * CELL_WIDTH, ORIGIN_Y + i * 7 * CELL_HEIGHT, ORIGIN_X + 5 * CELL_WIDTH, ORIGIN_Y + (2 + i * 7) * CELL_HEIGHT); 
+      g.drawLine(ORIGIN_X + 5 * CELL_WIDTH, ORIGIN_Y + i * 7 * CELL_HEIGHT, ORIGIN_X + 3 * CELL_WIDTH, ORIGIN_Y + (2 + i * 7) * CELL_HEIGHT); 
+      g.drawLine(ORIGIN_X + 8 * i * CELL_WIDTH, ORIGIN_Y + 4 * CELL_HEIGHT, ORIGIN_X + 8 * i * CELL_WIDTH, ORIGIN_Y + 5 * CELL_HEIGHT); 
+    }
   }
 }
 
