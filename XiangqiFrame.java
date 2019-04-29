@@ -32,14 +32,14 @@ class XiangqiFrame extends JFrame {
     System.out.println(xiangqiEngine);   
 
     XiangqiFrame xiangqiFrame = new XiangqiFrame();
-    XiangqiPanel xiangqiPanel = new XiangqiPanel(xiangqiEngine.getPieces());
+    XiangqiPanel xiangqiPanel = new XiangqiPanel(xiangqiEngine);
     xiangqiFrame.getContentPane().add(xiangqiPanel, BorderLayout.CENTER);
     xiangqiFrame.setVisible(true);
   }
 }
 
 class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener {
-  final static int ORIGIN_X = 29;
+  final static int ORIGIN_X = 83;
   final static int ORIGIN_Y = 31;
   final static int CELL_WIDTH = 43;
   final static int CELL_HEIGHT = 53;
@@ -48,11 +48,11 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   private int pickedPieceX;
   private int pickedPieceY;
 
-  private Set<XiangqiPiece> pieces;
+  private XiangqiEngine xiangqiEngine;
   private Map<String, BufferedImage> keyNameValueImage;
 
-  XiangqiPanel(Set<XiangqiPiece> pieces) {
-    this.pieces = pieces;
+  XiangqiPanel(XiangqiEngine xiangqiEngine) {
+    this.xiangqiEngine = xiangqiEngine;
     addMouseListener(this);
     addMouseMotionListener(this);
     keyNameValueImage = new HashMap<String, BufferedImage>();
@@ -63,14 +63,28 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   public void mouseClicked(MouseEvent me) {}
   public void mouseEntered(MouseEvent me) {}
   public void mouseExited(MouseEvent me) {}
+
   public void mousePressed(MouseEvent me) {
     Point p = me.getPoint();
-    System.out.println(p);
+    //int col = rectify((p.x - ORIGIN_X) / CELL_WIDTH);  
+    //int row = rectify((p.y - ORIGIN_Y) / CELL_HEIGHT);  
+    int col = (int)((p.x - ORIGIN_X + 0.5 * CELL_WIDTH) / CELL_WIDTH);  
+    int row = (int)((p.y - ORIGIN_Y + 0.5 * CELL_HEIGHT) / CELL_HEIGHT);  
+    System.out.println(p + " col=" + col + " row=" + row);
+    XiangqiPiece pickedPiece = xiangqiEngine.pieceAt(col, row);
+    if (pickedPiece != null) {
+      pickedPieceImage = getPieceImage(pickedPiece.imgName); 
+    }
+  }
+
+  private int rectify(int raw) {
+    return (int)(Math.floor(raw + 0.5));
   }
   
   public void mouseReleased(MouseEvent me) {
     Point p = me.getPoint();
     System.out.println(p);
+    pickedPieceImage = null;
   }
 
   // MouseMotionListener
@@ -87,14 +101,16 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    g.setColor(Color.white);
-    g.fillRect(10, 10, 400, 550);
+//    g.setColor(Color.white);
+ //   g.fillRect(41, 17, 400, 550);
 
     g.setColor(Color.black);
     drawGrid(g);
     drawPieces(g);
+    g.drawImage(pickedPieceImage, pickedPieceX, pickedPieceY, null);
   }
 
+  // may return null
   private BufferedImage getPieceImage(String imgName) {
     BufferedImage img = keyNameValueImage.get(imgName);
     if (img == null) {
@@ -120,7 +136,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   }
 
   private void drawPieces(Graphics g) {
-    for(XiangqiPiece piece: pieces) {
+    for(XiangqiPiece piece: xiangqiEngine.getPieces()) {
       g.drawImage(getPieceImage(piece.imgName), ORIGIN_X + CELL_WIDTH * piece.x - (int)(0.5 * CELL_WIDTH), ORIGIN_Y + CELL_HEIGHT * piece.y - (int)(0.5 * CELL_HEIGHT), this);
     }
   }
@@ -141,6 +157,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
       g.drawLine(ORIGIN_X + 8 * i * CELL_WIDTH, ORIGIN_Y + 4 * CELL_HEIGHT, ORIGIN_X + 8 * i * CELL_WIDTH, ORIGIN_Y + 5 * CELL_HEIGHT); 
     }
   }
+
 }
 
 enum Rank {
@@ -220,7 +237,7 @@ class XiangqiEngine {
     return brdStr;
   }
 
-  private XiangqiPiece pieceAt(int x, int y) {
+  XiangqiPiece pieceAt(int x, int y) {
     for (XiangqiPiece piece: pieces) {
       if (piece.x == x && piece.y == y) {
         return piece;
