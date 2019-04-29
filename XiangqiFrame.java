@@ -1,7 +1,8 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.imageio.ImageIO;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Color;
@@ -82,6 +83,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
 
     g.setColor(Color.black);
     drawGrid(g);
+    drawPieces(g);
     
     try {
       String path = "bb.png";
@@ -91,6 +93,10 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     } catch(IOException ioe) {
       System.out.println("failed to load images");
     }
+  }
+
+  private void drawPieces(Graphics g) {
+     
   }
 
   private void loadImages() {
@@ -127,35 +133,40 @@ enum Rank {
 class XiangqiEngine {
   final static int ROWS = 10;
   final static int COLS = 9;
-  private ArrayList<XiangqiPiece> pieces;
+  private Set<XiangqiPiece> pieces;
   
   XiangqiEngine() {
-    pieces = new ArrayList<XiangqiPiece>();
+    pieces = new HashSet<XiangqiPiece>();
     addInitialPieces();
     
   }
 
   private void addInitialPieces() {
     for (int i = 0; i < 5; i++) {
-      pieces.add(new XiangqiPiece(2 * i, 3, Rank.PAWN, true));
-      pieces.add(new XiangqiPiece(2 * i, 6, Rank.PAWN, false));
+      addPiece(2 * i, 3, Rank.PAWN, true, "bb");
+      addPiece(2 * i, 6, Rank.PAWN, false, "bb");
     }
 
     for (int i = 0; i < 2; i++) {
-      pieces.add(new XiangqiPiece(8 * i, 0, Rank.ROOK, true));
-      pieces.add(new XiangqiPiece(8 * i, 9, Rank.ROOK, false));
-      pieces.add(new XiangqiPiece(1 + 6 * i, 0, Rank.KNIGHT, true));
-      pieces.add(new XiangqiPiece(1 + 6 * i, 9, Rank.KNIGHT, false));
-      pieces.add(new XiangqiPiece(2 + 4 * i, 0, Rank.BISHIP, true));
-      pieces.add(new XiangqiPiece(2 + 4 * i, 9, Rank.BISHIP, false));
-      pieces.add(new XiangqiPiece(3 + 2 * i, 0, Rank.GUARD, true));
-      pieces.add(new XiangqiPiece(3 + 2 * i, 9, Rank.GUARD, false));
-      pieces.add(new XiangqiPiece(1 + 6 * i, 2, Rank.CANNON, true));
-      pieces.add(new XiangqiPiece(1 + 6 * i, 7, Rank.CANNON, false));
+      addPiece(8 * i, 0, Rank.ROOK, true, "bb");
+      addPiece(8 * i, 9, Rank.ROOK, false, "bb");
+      addPiece(1 + 6 * i, 0, Rank.KNIGHT, true, "bb");
+      addPiece(1 + 6 * i, 9, Rank.KNIGHT, false, "bb");
+      addPiece(2 + 4 * i, 0, Rank.BISHIP, true, "bb");
+      addPiece(2 + 4 * i, 9, Rank.BISHIP, false, "bb");
+      addPiece(3 + 2 * i, 0, Rank.GUARD, true, "bb");
+      addPiece(3 + 2 * i, 9, Rank.GUARD, false, "bb");
+      addPiece(1 + 6 * i, 2, Rank.CANNON, true, "bb");
+      addPiece(1 + 6 * i, 7, Rank.CANNON, false, "bb");
     }
     
-    pieces.add(new XiangqiPiece(4, 0, Rank.KING, true));
-    pieces.add(new XiangqiPiece(4, 9, Rank.KING, false));
+    addPiece(4, 0, Rank.KING, true, "bb");
+    addPiece(4, 9, Rank.KING, false, "bb");
+
+  }
+
+  private void addPiece(int col, int row, Rank rank, boolean isRed, String imgName) {
+    pieces.add(new XiangqiPiece(col, row, rank, isRed, imgName));
 
   }
 
@@ -184,14 +195,12 @@ class XiangqiEngine {
   }
 
   private XiangqiPiece pieceAt(int x, int y) {
-    for (int i = 0; i < pieces.size(); i++) {
-      XiangqiPiece piece = pieces.get(i);
+    for (XiangqiPiece piece: pieces) {
       if (piece.x == x && piece.y == y) {
         return piece;
       }
     }
     return null;
-
   }
 }
 
@@ -200,11 +209,13 @@ class XiangqiPiece {
   int y;
   Rank rank;
   boolean isRed;
+  String imgName;
 
-  XiangqiPiece(int x, int y, Rank rank, boolean isRed) {
+  XiangqiPiece(int x, int y, Rank rank, boolean isRed, String imgName) {
     this.x = x;
     this.y = y;
     this.rank = rank;
     this.isRed = isRed;
+    this.imgName = imgName;
   }
 }
