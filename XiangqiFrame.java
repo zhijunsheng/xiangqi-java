@@ -66,8 +66,6 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
 
   public void mousePressed(MouseEvent me) {
     Point p = me.getPoint();
-    //int col = rectify((p.x - ORIGIN_X) / CELL_WIDTH);  
-    //int row = rectify((p.y - ORIGIN_Y) / CELL_HEIGHT);  
     int col = (int)((p.x - ORIGIN_X + 0.5 * CELL_WIDTH) / CELL_WIDTH);  
     int row = (int)((p.y - ORIGIN_Y + 0.5 * CELL_HEIGHT) / CELL_HEIGHT);  
     System.out.println(p + " col=" + col + " row=" + row);
@@ -77,10 +75,6 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
   }
 
-  private int rectify(int raw) {
-    return (int)(Math.floor(raw + 0.5));
-  }
-  
   public void mouseReleased(MouseEvent me) {
     Point p = me.getPoint();
     System.out.println(p);
@@ -91,8 +85,8 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   
   public void mouseDragged(MouseEvent me) {
     Point p = me.getPoint();
-    pickedPieceX = p.x;
-    pickedPieceY = p.y;
+    pickedPieceX = p.x - CELL_WIDTH / 2;
+    pickedPieceY = p.y - CELL_WIDTH / 2;
     repaint();
   }
 
