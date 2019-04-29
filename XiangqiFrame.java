@@ -25,23 +25,47 @@ class XiangqiEngine {
   private ArrayList<XiangqiPiece> pieces;
   
   XiangqiEngine() {
-    System.out.println("in XiangqiEngine()");
     pieces = new ArrayList<XiangqiPiece>();
+    addInitialPieces();
     
+  }
+
+  private void addInitialPieces() {
+    for (int i = 0; i < 5; i++) {
+      XiangqiPiece pawn = new XiangqiPiece();
+      pawn.x = 2 * i;
+      pawn.y = 3;
+      pawn.rank = 0;
+      pawn.isRed = true;
+      pieces.add(pawn);
+    }
   }
 
   public String toString() {
     String brdStr = "";
-    for (int x = 0; x < ROWS; x++) {
-      for (int y = 0; y < COLS; y++) {
-        System.out.print(" .");
+    for (int y = 0; y < ROWS; y++) {
+      for (int x = 0; x < COLS; x++) {
+        XiangqiPiece piece = pieceAt(x, y);
+        if (piece == null) {
+          brdStr += " .";
+        } else {
+          if (piece.rank == 0) {
+            brdStr += " p";
+          }
+        }
       }
-      System.out.println();
+      brdStr += "\n";
     }
-    return "board string";
+    return brdStr;
   }
 
   private XiangqiPiece pieceAt(int x, int y) {
+    for (int i = 0; i < pieces.size(); i++) {
+      XiangqiPiece piece = pieces.get(i);
+      if (piece.x == x && piece.y == y) {
+        return piece;
+      }
+    }
     return null;
 
   }
