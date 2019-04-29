@@ -4,10 +4,12 @@ import javax.imageio.ImageIO;
 import java.util.Set;
 import java.util.HashSet;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
+import java.awt.Image;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
@@ -28,7 +30,7 @@ class XiangqiFrame extends JFrame {
     System.out.println(xiangqiEngine);   
 
     XiangqiFrame xiangqiFrame = new XiangqiFrame();
-    XiangqiPanel xiangqiPanel = new XiangqiPanel();
+    XiangqiPanel xiangqiPanel = new XiangqiPanel(xiangqiEngine.getPieces());
     xiangqiFrame.getContentPane().add(xiangqiPanel, BorderLayout.CENTER);
     xiangqiFrame.setVisible(true);
   }
@@ -44,7 +46,10 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   private int pickedPieceX;
   private int pickedPieceY;
 
-  XiangqiPanel() {
+  private Set<XiangqiPiece> pieces;
+
+  XiangqiPanel(Set<XiangqiPiece> pieces) {
+    this.pieces = pieces;
     addMouseListener(this);
     addMouseMotionListener(this);
   }
@@ -88,15 +93,34 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     try {
       String path = "bb.png";
       File file = new File(path);
-      BufferedImage image = ImageIO.read(file);
+      BufferedImage image = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
       g.drawImage(image, pickedPieceX, pickedPieceY, this);
     } catch(IOException ioe) {
       System.out.println("failed to load images");
     }
   }
 
+  private BufferedImage resize(BufferedImage img, int width, int height) {
+    Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = resized.createGraphics();
+    g2d.drawImage(tmp, 0, 0, null);
+    g2d.dispose();
+    return resized;
+  }
+
   private void drawPieces(Graphics g) {
-     
+    for(XiangqiPiece piece: pieces) {
+
+    try {
+      String path = piece.imgName + ".png";
+      File file = new File(path);
+      BufferedImage image = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
+      g.drawImage(image, ORIGIN_X + CELL_WIDTH * piece.x - (int)(0.5 * CELL_WIDTH), ORIGIN_Y + CELL_HEIGHT * piece.y - (int)(0.5 * CELL_HEIGHT), this);
+    } catch(IOException ioe) {
+      System.out.println("failed to load images");
+    }
+    }
   }
 
   private void loadImages() {
@@ -138,7 +162,10 @@ class XiangqiEngine {
   XiangqiEngine() {
     pieces = new HashSet<XiangqiPiece>();
     addInitialPieces();
-    
+  }
+
+  Set<XiangqiPiece> getPieces() {
+    return pieces;
   }
 
   private void addInitialPieces() {
