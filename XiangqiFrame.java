@@ -84,6 +84,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     pickedPieceImage = null;
     xiangqiEngine.move(logicalFrom, p);
     repaint();
+    System.out.println(xiangqiEngine);   
   }
 
   // MouseMotionListener
