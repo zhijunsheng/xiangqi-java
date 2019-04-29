@@ -170,24 +170,24 @@ class XiangqiEngine {
 
   private void addInitialPieces() {
     for (int i = 0; i < 5; i++) {
-      addPiece(2 * i, 3, Rank.PAWN, true, "bb");
-      addPiece(2 * i, 6, Rank.PAWN, false, "bb");
+      addPiece(2 * i, 3, Rank.PAWN, true, "rz");
+      addPiece(2 * i, 6, Rank.PAWN, false, "bz");
     }
 
     for (int i = 0; i < 2; i++) {
-      addPiece(8 * i, 0, Rank.ROOK, true, "bb");
-      addPiece(8 * i, 9, Rank.ROOK, false, "bb");
-      addPiece(1 + 6 * i, 0, Rank.KNIGHT, true, "bb");
-      addPiece(1 + 6 * i, 9, Rank.KNIGHT, false, "bb");
-      addPiece(2 + 4 * i, 0, Rank.BISHIP, true, "bb");
-      addPiece(2 + 4 * i, 9, Rank.BISHIP, false, "bb");
-      addPiece(3 + 2 * i, 0, Rank.GUARD, true, "bb");
-      addPiece(3 + 2 * i, 9, Rank.GUARD, false, "bb");
-      addPiece(1 + 6 * i, 2, Rank.CANNON, true, "bb");
-      addPiece(1 + 6 * i, 7, Rank.CANNON, false, "bb");
+      addPiece(8 * i, 0, Rank.ROOK, true, "rj");
+      addPiece(8 * i, 9, Rank.ROOK, false, "bj");
+      addPiece(1 + 6 * i, 0, Rank.KNIGHT, true, "rm");
+      addPiece(1 + 6 * i, 9, Rank.KNIGHT, false, "bm");
+      addPiece(2 + 4 * i, 0, Rank.BISHIP, true, "rx");
+      addPiece(2 + 4 * i, 9, Rank.BISHIP, false, "bx");
+      addPiece(3 + 2 * i, 0, Rank.GUARD, true, "rs");
+      addPiece(3 + 2 * i, 9, Rank.GUARD, false, "bs");
+      addPiece(1 + 6 * i, 2, Rank.CANNON, true, "rp");
+      addPiece(1 + 6 * i, 7, Rank.CANNON, false, "bp");
     }
     
-    addPiece(4, 0, Rank.KING, true, "bb");
+    addPiece(4, 0, Rank.KING, true, "rb");
     addPiece(4, 9, Rank.KING, false, "bb");
 
   }
