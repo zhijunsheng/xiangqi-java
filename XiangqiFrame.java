@@ -82,10 +82,12 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     if (logicalFrom == null) {
       return;
     }
-    Point p = screenToLogical(me.getPoint());
-    System.out.println(p);
+    Point logicalTo = screenToLogical(me.getPoint());
+    System.out.println(logicalTo);
     pickedPieceImage = null;
-    xiangqiEngine.move(logicalFrom, p);
+    if (xiangqiEngine.isValidMove(logicalFrom, logicalTo)) {
+      xiangqiEngine.move(logicalFrom, logicalTo);
+    }
     repaint();
     System.out.println(xiangqiEngine);   
   }
@@ -184,17 +186,32 @@ class XiangqiEngine {
     return pieces;
   }
 
-  void move(Point from, Point to) {
+  boolean isValidMove(Point from, Point to) {
     if (from == null || to == null) {
-      return;
+      return false;
     }
+
+    XiangqiPiece movingPiece = pieceAt(from.x, from.y);
+    if (movingPiece == null) {
+      return false;
+    }
+
+    XiangqiPiece targetPiece = pieceAt(to.x, to.y);
+    if (targetPiece == null) {
+    } else {
+      if (targetPiece.isRed == movingPiece.isRed) {
+        return false;
+      }
+    }
+
+
+    return true;
+  }
+
+  void move(Point from, Point to) {
     XiangqiPiece piece = pieceAt(from.x, from.y);
-    if (piece == null) {
-      return;
-    }
     pieces.remove(piece);
     addPiece(to.x, to.y, piece.rank, piece.isRed, piece.imgName);
-    System.out.println(pieces.size());
   }
 
   private void addInitialPieces() {
@@ -218,7 +235,6 @@ class XiangqiEngine {
     
     addPiece(4, 0, Rank.KING, true, "rb");
     addPiece(4, 9, Rank.KING, false, "bb");
-
   }
 
   private void addPiece(int col, int row, Rank rank, boolean isRed, String imgName) {
