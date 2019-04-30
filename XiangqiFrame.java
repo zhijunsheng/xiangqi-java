@@ -44,7 +44,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   final static int CELL_WIDTH = 43;
   final static int CELL_HEIGHT = 53;
 
-  private BufferedImage pickedPieceImage;
+  private BufferedImage movingPieceImage;
   private Point movingPieceScreenLocation;
   private Point logicalFrom;
 
@@ -73,7 +73,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     XiangqiPiece pickedPiece = xiangqiEngine.pieceAt(p.x, p.y);
     if (pickedPiece != null) {
       logicalFrom = p;
-      pickedPieceImage = getPieceImage(pickedPiece.imgName); 
+      movingPieceImage = getPieceImage(pickedPiece.imgName); 
     }
   }
 
@@ -83,7 +83,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
     Point logicalTo = screenToLogical(me.getPoint());
     System.out.print("(" + logicalFrom.x + ", " + logicalFrom.y + ") -> (" + logicalTo.x + ", " + logicalTo.y + ") ");   
-    pickedPieceImage = null;
+    movingPieceImage = null;
     if (xiangqiEngine.isValidMove(logicalFrom, logicalTo)) {
       xiangqiEngine.move(logicalFrom, logicalTo);
       System.out.println("valid move");   
@@ -110,8 +110,8 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     g.setColor(Color.black);
     drawGrid(g);
     drawPieces(g);
-    if (pickedPieceImage != null) {
-      g.drawImage(pickedPieceImage, movingPieceScreenLocation.x, movingPieceScreenLocation.y, null);
+    if (movingPieceImage != null) {
+      g.drawImage(movingPieceImage, movingPieceScreenLocation.x, movingPieceScreenLocation.y, null);
     }
   }
 
