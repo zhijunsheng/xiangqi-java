@@ -83,10 +83,13 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
       return;
     }
     Point logicalTo = screenToLogical(me.getPoint());
-    System.out.println(logicalTo);
+    System.out.print("(" + logicalFrom.x + ", " + logicalFrom.y + ") -> (" + logicalTo.x + ", " + logicalTo.y + ") ");   
     pickedPieceImage = null;
     if (xiangqiEngine.isValidMove(logicalFrom, logicalTo)) {
       xiangqiEngine.move(logicalFrom, logicalTo);
+      System.out.println("valid move");   
+    } else {
+      System.out.println("invalid move");   
     }
     repaint();
     System.out.println(xiangqiEngine);   
