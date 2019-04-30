@@ -40,7 +40,7 @@ class XiangqiFrame extends JFrame {
 
 class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener {
   final static int ORIGIN_X = 83;
-  final static int ORIGIN_Y = 31;
+  final static int ORIGIN_Y = 51;
   final static int CELL_WIDTH = 43;
   final static int CELL_HEIGHT = 53;
 
@@ -79,6 +79,9 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   }
 
   public void mouseReleased(MouseEvent me) {
+    if (logicalFrom == null) {
+      return;
+    }
     Point p = screenToLogical(me.getPoint());
     System.out.println(p);
     pickedPieceImage = null;
@@ -182,6 +185,9 @@ class XiangqiEngine {
   }
 
   void move(Point from, Point to) {
+    if (from == null || to == null) {
+      return;
+    }
     XiangqiPiece piece = pieceAt(from.x, from.y);
     if (piece == null) {
       return;
