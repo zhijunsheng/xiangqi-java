@@ -45,8 +45,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   final static int CELL_HEIGHT = 53;
 
   private BufferedImage pickedPieceImage;
-  private int pickedPieceX;
-  private int pickedPieceY;
+  private Point movingPieceScreenLocation;
   private Point logicalFrom;
 
   private XiangqiEngine xiangqiEngine;
@@ -99,8 +98,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   
   public void mouseDragged(MouseEvent me) {
     Point p = me.getPoint();
-    pickedPieceX = p.x - CELL_WIDTH / 2;
-    pickedPieceY = p.y - CELL_WIDTH / 2;
+    movingPieceScreenLocation = new Point(p.x - CELL_WIDTH / 2, p.y - CELL_WIDTH / 2);
     repaint();
   }
 
@@ -112,7 +110,9 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     g.setColor(Color.black);
     drawGrid(g);
     drawPieces(g);
-    g.drawImage(pickedPieceImage, pickedPieceX, pickedPieceY, null);
+    if (pickedPieceImage != null) {
+      g.drawImage(pickedPieceImage, movingPieceScreenLocation.x, movingPieceScreenLocation.y, null);
+    }
   }
 
   // may return null
