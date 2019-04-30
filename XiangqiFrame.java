@@ -83,13 +83,17 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
     Point logicalTo = screenToLogical(me.getPoint());
     System.out.print("(" + logicalFrom.x + ", " + logicalFrom.y + ") -> (" + logicalTo.x + ", " + logicalTo.y + ") ");   
-    movingPieceImage = null;
+
     if (xiangqiEngine.isValidMove(logicalFrom, logicalTo)) {
       xiangqiEngine.move(logicalFrom, logicalTo);
       System.out.println("valid move");   
     } else {
       System.out.println("invalid move");   
     }
+
+    logicalFrom = null;
+    movingPieceImage = null;
+    movingPieceScreenLocation = null;
     repaint();
     System.out.println(xiangqiEngine);   
   }
@@ -142,6 +146,9 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
 
   private void drawPieces(Graphics g) {
     for(XiangqiPiece piece: xiangqiEngine.getPieces()) {
+      if (logicalFrom != null && logicalFrom.x == piece.x && logicalFrom.y == piece.y) {
+        continue;
+      }
       g.drawImage(getPieceImage(piece.imgName), ORIGIN_X + CELL_WIDTH * piece.x - (int)(0.5 * CELL_WIDTH), ORIGIN_Y + CELL_HEIGHT * piece.y - (int)(0.5 * CELL_HEIGHT), this);
     }
   }
