@@ -212,8 +212,6 @@ class XiangqiEngine {
     }
 
     switch (movingPiece.rank) {
-      case ROOK:
-        return isValidRookMove(from, to);
       case GUARD:
         return isValidGuardMove(from, to, movingPiece.isRed);
       case KING: 
@@ -222,6 +220,8 @@ class XiangqiEngine {
         return isValidBishopMove(from, to, movingPiece.isRed);
       case KNIGHT:
         return isValidKnightMove(from, to);
+      case ROOK:
+        return isValidRookMove(from, to);
     }
 
     return true;
@@ -234,7 +234,7 @@ class XiangqiEngine {
   }
     
   private boolean isValidRookMove(Point from, Point to) {
-    return false;
+    return (from.x == to.x || from.y == to.y) && numPiecesBetween(from, to) == 0;
   }
 
   private boolean isValidKnightMove(Point from, Point to) {
@@ -292,6 +292,33 @@ class XiangqiEngine {
     } else {
       return location.x >= 3 && location.x <= 5 && location.y >= 7 && location.y <= 9;
     }
+  }
+
+  private int numPiecesBetween(Point from, Point to) {
+    if (from.x != to.x && from.y != to.y || from.x == to.x && Math.abs(from.y - to.y) <= 1 || from.y == to.y && Math.abs(from.x - to.x) <= 1) {
+      return 0;
+    }
+    int pieceCnt = 0;
+    int smallerCoordinate;
+    int largerCoordinate;
+    if (from.x == to.x) {
+      smallerCoordinate = Math.min(from.y, to.y);
+      largerCoordinate = Math.max(from.y, to.y);
+      for (int y = smallerCoordinate + 1; y < largerCoordinate; y++) {
+        if (pieceAt(from.x, y) != null) {
+          pieceCnt++;
+        }
+      }
+    } else {
+      smallerCoordinate = Math.min(from.x, to.x);
+      largerCoordinate = Math.max(from.x, to.x);
+      for (int x = smallerCoordinate + 1; x < largerCoordinate; x++) {
+        if (pieceAt(x, from.y) != null) {
+          pieceCnt++;
+        }
+      }
+    }
+    return pieceCnt;
   }
 
   private void addInitialPieces() {
