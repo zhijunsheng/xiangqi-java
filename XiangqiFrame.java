@@ -220,6 +220,8 @@ class XiangqiEngine {
         return isValidKingMove(from, to, movingPiece.isRed); 
       case BISHOP:
         return isValidBishopMove(from, to, movingPiece.isRed);
+      case KNIGHT:
+        return isValidKnightMove(from, to);
     }
 
     return true;
@@ -232,6 +234,15 @@ class XiangqiEngine {
   }
     
   private boolean isValidRookMove(Point from, Point to) {
+    return false;
+  }
+
+  private boolean isValidKnightMove(Point from, Point to) {
+    if (Math.abs(from.x - to.x) == 1 && Math.abs(from.y - to.y) == 2) {
+      return pieceAt(from.x, (from.y + to.y)/2) == null;
+    } else if (Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 1) {
+      return pieceAt((from.x + to.x)/2, from.y) == null;
+    }
     return false;
   }
 
