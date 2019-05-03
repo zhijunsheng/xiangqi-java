@@ -70,7 +70,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
 
   public void mousePressed(MouseEvent me) {
     Point p = screenToLogical(me.getPoint());
-    XiangqiPiece pickedPiece = xiangqiEngine.pieceAt(p.x, p.y);
+    XiangqiPiece pickedPiece = xiangqiEngine.pieceAt(p);
     if (pickedPiece != null) {
       logicalFrom = p;
       movingPieceImage = getPieceImage(pickedPiece.imgName); 
@@ -197,20 +197,14 @@ class XiangqiEngine {
   }
 
   boolean isValidMove(Point from, Point to) {
-    if (from == null || to == null || !insideBoard(to)) {
+    if (from == null || to == null || from == to || !insideBoard(to) || sameColor(from, to)) {
       return false;
     }
 
-    XiangqiPiece movingPiece = pieceAt(from.x, from.y);
+    XiangqiPiece movingPiece = pieceAt(from);
     if (movingPiece == null) {
       return false;
     }
-
-    XiangqiPiece targetPiece = pieceAt(to.x, to.y);
-    if (targetPiece != null && targetPiece.isRed == movingPiece.isRed) {
-      return false;
-    }
-
     switch (movingPiece.rank) {
       case GUARD:
         return isValidGuardMove(from, to, movingPiece.isRed);
@@ -222,19 +216,29 @@ class XiangqiEngine {
         return isValidKnightMove(from, to);
       case ROOK:
         return isValidRookMove(from, to);
+      case CANNON:
+        return isValidCannonMove(from, to);
     }
 
     return true;
   }
 
   void move(Point from, Point to) {
-    XiangqiPiece piece = pieceAt(from.x, from.y);
+    XiangqiPiece piece = pieceAt(from);
     pieces.remove(piece);
     addPiece(to.x, to.y, piece.rank, piece.isRed, piece.imgName);
   }
+
+  private boolean isValidCannonMove(Point from, Point to) {
+    if (pieceAt(to) == null) {
+      return isValidRookMove(from, to);
+    } else {
+      return numPiecesBetween(from, to) == 1 && !sameColor(from, to);
+    }
+  }
     
   private boolean isValidRookMove(Point from, Point to) {
-    return (from.x == to.x || from.y == to.y) && numPiecesBetween(from, to) == 0;
+    return isStraight(from, to) && numPiecesBetween(from, to) == 0;
   }
 
   private boolean isValidKnightMove(Point from, Point to) {
@@ -284,6 +288,16 @@ class XiangqiEngine {
     } else {
       return location.y >= 5;
     }
+  }
+
+  private boolean sameColor(Point from, Point to) {
+    XiangqiPiece fromP = pieceAt(from);
+    XiangqiPiece toP = pieceAt(to);
+    return fromP != null && toP != null && fromP.isRed == toP.isRed;
+  }
+
+  private boolean isStraight(Point from, Point to) {
+    return from.x == to.x || from.y == to.y;
   }
 
   private boolean insidePalace(Point location, boolean isRed) {
@@ -371,6 +385,10 @@ class XiangqiEngine {
       brdStr += "\n";
     }
     return brdStr;
+  }
+
+  XiangqiPiece pieceAt(Point location) {
+    return pieceAt(location.x, location.y);
   }
 
   XiangqiPiece pieceAt(int x, int y) {
