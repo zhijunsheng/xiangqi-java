@@ -208,12 +208,17 @@ class XiangqiEngine {
 
     XiangqiPiece targetPiece = pieceAt(to.x, to.y);
     if (targetPiece == null) {
-    } else {
+      switch (movingPiece.rank) {
+        case ROOK:
+          return isValidRookMove(from, to);
+        case GUARD:
+          return isValidGuardMove(from, to, movingPiece.isRed);
+      }
+    } else { // capture
       if (targetPiece.isRed == movingPiece.isRed) {
         return false;
       }
     }
-
 
     return true;
   }
@@ -222,6 +227,26 @@ class XiangqiEngine {
     XiangqiPiece piece = pieceAt(from.x, from.y);
     pieces.remove(piece);
     addPiece(to.x, to.y, piece.rank, piece.isRed, piece.imgName);
+  }
+  
+  private boolean isValidRookMove(Point from, Point to) {
+    return false;
+  }
+
+  private boolean isValidGuardMove(Point from, Point to, boolean isRed) {
+    if (!insidePalace(to, isRed)) {
+      return false;
+    }
+
+    return Math.abs(from.x - to.x) == 1 && Math.abs(from.y - to.y) == 1;
+  }
+
+  private boolean insidePalace(Point location, boolean isRed) {
+    if (isRed) {
+      return location.x >= 3 && location.x <= 5 && location.y >= 0 && location.y <= 2;
+    } else {
+      return location.x >= 3 && location.x <= 5 && location.y >= 7 && location.y <= 9;
+    }
   }
 
   private void addInitialPieces() {
