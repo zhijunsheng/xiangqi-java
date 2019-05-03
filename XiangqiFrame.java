@@ -224,13 +224,10 @@ class XiangqiEngine {
   }
 
   void move(Point from, Point to) {
-    XiangqiPiece fromP = pieceAt(from);
-    XiangqiPiece toP = pieceAt(to);
-    pieces.remove(fromP);
-    if (toP != null) {
-      pieces.remove(toP);
-    }
-    addPiece(to.x, to.y, fromP.rank, fromP.isRed, fromP.imgName);
+    XiangqiPiece movingPiece = pieceAt(from);
+    pieces.remove(movingPiece);
+    pieces.remove(pieceAt(to));
+    addPiece(to.x, to.y, movingPiece.rank, movingPiece.isRed, movingPiece.imgName);
   }
 
   private boolean isValidCannonMove(Point from, Point to) {
