@@ -213,6 +213,8 @@ class XiangqiEngine {
           return isValidRookMove(from, to);
         case GUARD:
           return isValidGuardMove(from, to, movingPiece.isRed);
+        case KING: 
+          return isValidKingMove(from, to, movingPiece.isRed); 
       }
     } else { // capture
       if (targetPiece.isRed == movingPiece.isRed) {
@@ -231,6 +233,14 @@ class XiangqiEngine {
   
   private boolean isValidRookMove(Point from, Point to) {
     return false;
+  }
+
+  private boolean isValidKingMove(Point from, Point to, boolean isRed) {
+    if (!insidePalace(to, isRed)) {
+      return false;
+    }
+
+    return from.x == to.x && Math.abs(from.y - to.y) == 1 || from.y == to.y && Math.abs(from.x - to.x) == 1;
   }
 
   private boolean isValidGuardMove(Point from, Point to, boolean isRed) {
