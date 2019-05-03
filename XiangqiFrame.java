@@ -186,6 +186,7 @@ class XiangqiEngine {
   final static int ROWS = 10;
   final static int COLS = 9;
   private Set<XiangqiPiece> pieces;
+  private boolean isRedTurn = true;
   
   XiangqiEngine() {
     pieces = new HashSet<XiangqiPiece>();
@@ -202,7 +203,7 @@ class XiangqiEngine {
     }
 
     XiangqiPiece movingPiece = pieceAt(from);
-    if (movingPiece == null) {
+    if (movingPiece == null || isRedTurn != movingPiece.isRed) {
       return false;
     }
     switch (movingPiece.rank) {
@@ -230,6 +231,7 @@ class XiangqiEngine {
     pieces.remove(movingPiece);
     pieces.remove(pieceAt(to));
     addPiece(to.x, to.y, movingPiece.rank, movingPiece.isRed, movingPiece.imgName);
+    isRedTurn = !isRedTurn;
   }
 
   private boolean isValidPawnMove(Point from, Point to, boolean isRed) {
