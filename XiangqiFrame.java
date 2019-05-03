@@ -29,7 +29,7 @@ class XiangqiFrame extends JFrame {
   }
   
   public static void main(String[] args) {
-    XiangqiEngine xiangqiEngine = new XiangqiEngine();
+    XiangqiEngine xiangqiEngine = new XiangqiEngine(XiangqiEngine.initialPieces());
     System.out.println(xiangqiEngine);   
 
     XiangqiFrame xiangqiFrame = new XiangqiFrame();
@@ -194,16 +194,40 @@ class XiangqiEngine {
   private Set<XiangqiPiece> pieces;
   private boolean isRedTurn = true;
   
-  XiangqiEngine() {
-    pieces = new HashSet<XiangqiPiece>();
-    addInitialPieces();
+  XiangqiEngine(Set<XiangqiPiece> pieces) {
+    this.pieces = pieces;
   }
 
   Set<XiangqiPiece> getPieces() {
     return pieces;
   }
-
+  
   boolean isValidMove(Point from, Point to) {
+    if (isValid(from, to)) {
+      HashSet<XiangqiPiece> tmpPieces = new HashSet<XiangqiPiece>(pieces);
+      XiangqiEngine tmpEngine = new XiangqiEngine(tmpPieces);
+      boolean tmpKingCaptured = tmpEngine.move(from, to);
+      if (tmpKingCaptured) { 
+        return true;
+      } else {
+        XiangqiPiece redKing = null;
+        XiangqiPiece blackKing = null;
+        for (XiangqiPiece p: tmpPieces) {
+          if (p.rank == Rank.KING) {
+            if (p.isRed) {
+              redKing = p;
+            } else {
+              blackKing = p;
+            }
+          }
+        }
+        return redKing.x != blackKing.x || tmpEngine.numPiecesBetween(new Point(redKing.x, redKing.y), new Point(blackKing.x, blackKing.y)) > 0;
+      }
+    }
+    return false;
+  }
+
+  private boolean isValid(Point from, Point to) {
     if (from == null || to == null || from == to || !insideBoard(to) || sameColor(from, to)) {
       return false;
     }
@@ -237,7 +261,7 @@ class XiangqiEngine {
     XiangqiPiece targetPiece = pieceAt(to);
     pieces.remove(movingPiece);
     pieces.remove(targetPiece);
-    addPiece(to.x, to.y, movingPiece.rank, movingPiece.isRed, movingPiece.imgName);
+    addPiece(pieces, to.x, to.y, movingPiece.rank, movingPiece.isRed, movingPiece.imgName);
     isRedTurn = !isRedTurn;
     return targetPiece != null && targetPiece.rank == Rank.KING;
   }
@@ -285,7 +309,18 @@ class XiangqiEngine {
       return false;
     }
 
-    return from.x == to.x && Math.abs(from.y - to.y) == 1 || from.y == to.y && Math.abs(from.x - to.x) == 1;
+    XiangqiPiece opponentKing = null;
+    for (XiangqiPiece p: pieces) {
+      if (p.rank == Rank.KING && p.isRed != isRed) {
+        opponentKing = p;
+        break;
+      }
+    }
+    if (to.x == opponentKing.x && numPiecesBetween(to, new Point(opponentKing.x, opponentKing.y)) == 0) {
+      return false;
+    }
+
+    return isStraight(from, to) && (Math.abs(from.y - to.y) == 1 || Math.abs(from.x - to.x) == 1);
   }
 
   private boolean isValidGuardMove(Point from, Point to, boolean isRed) {
@@ -357,32 +392,33 @@ class XiangqiEngine {
     return pieceCnt;
   }
 
-  private void addInitialPieces() {
+  static Set<XiangqiPiece> initialPieces() {
+    Set<XiangqiPiece> pieces = new HashSet<XiangqiPiece>();
     for (int i = 0; i < 5; i++) {
-      addPiece(2 * i, 3, Rank.PAWN, true, "rz");
-      addPiece(2 * i, 6, Rank.PAWN, false, "bz");
+      addPiece(pieces, 2 * i, 3, Rank.PAWN, true, "rz");
+      addPiece(pieces, 2 * i, 6, Rank.PAWN, false, "bz");
     }
 
     for (int i = 0; i < 2; i++) {
-      addPiece(8 * i, 0, Rank.ROOK, true, "rj");
-      addPiece(8 * i, 9, Rank.ROOK, false, "bj");
-      addPiece(1 + 6 * i, 0, Rank.KNIGHT, true, "rm");
-      addPiece(1 + 6 * i, 9, Rank.KNIGHT, false, "bm");
-      addPiece(2 + 4 * i, 0, Rank.BISHOP, true, "rx");
-      addPiece(2 + 4 * i, 9, Rank.BISHOP, false, "bx");
-      addPiece(3 + 2 * i, 0, Rank.GUARD, true, "rs");
-      addPiece(3 + 2 * i, 9, Rank.GUARD, false, "bs");
-      addPiece(1 + 6 * i, 2, Rank.CANNON, true, "rp");
-      addPiece(1 + 6 * i, 7, Rank.CANNON, false, "bp");
+      addPiece(pieces, 8 * i, 0, Rank.ROOK, true, "rj");
+      addPiece(pieces, 8 * i, 9, Rank.ROOK, false, "bj");
+      addPiece(pieces, 1 + 6 * i, 0, Rank.KNIGHT, true, "rm");
+      addPiece(pieces, 1 + 6 * i, 9, Rank.KNIGHT, false, "bm");
+      addPiece(pieces, 2 + 4 * i, 0, Rank.BISHOP, true, "rx");
+      addPiece(pieces, 2 + 4 * i, 9, Rank.BISHOP, false, "bx");
+      addPiece(pieces, 3 + 2 * i, 0, Rank.GUARD, true, "rs");
+      addPiece(pieces, 3 + 2 * i, 9, Rank.GUARD, false, "bs");
+      addPiece(pieces, 1 + 6 * i, 2, Rank.CANNON, true, "rp");
+      addPiece(pieces, 1 + 6 * i, 7, Rank.CANNON, false, "bp");
     }
     
-    addPiece(4, 0, Rank.KING, true, "rb");
-    addPiece(4, 9, Rank.KING, false, "bb");
+    addPiece(pieces, 4, 0, Rank.KING, true, "rb");
+    addPiece(pieces, 4, 9, Rank.KING, false, "bb");
+    return pieces;
   }
 
-  private void addPiece(int col, int row, Rank rank, boolean isRed, String imgName) {
+  private static void addPiece(Set<XiangqiPiece> pieces, int col, int row, Rank rank, boolean isRed, String imgName) {
     pieces.add(new XiangqiPiece(col, row, rank, isRed, imgName));
-
   }
 
   public String toString() {
