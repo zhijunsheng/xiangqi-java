@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.imageio.ImageIO;
 import java.util.Set;
 import java.util.Map;
@@ -84,9 +85,10 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     Point logicalTo = screenToLogical(me.getPoint());
     System.out.print("(" + logicalFrom.x + ", " + logicalFrom.y + ") -> (" + logicalTo.x + ", " + logicalTo.y + ") ");   
 
+    boolean kingCaptured = false;
     if (xiangqiEngine.isValidMove(logicalFrom, logicalTo)) {
-      xiangqiEngine.move(logicalFrom, logicalTo);
       System.out.println("valid move");   
+      kingCaptured = xiangqiEngine.move(logicalFrom, logicalTo);
     } else {
       System.out.println("invalid move");   
     }
@@ -96,6 +98,11 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     movingPieceScreenLocation = null;
     repaint();
     System.out.println(xiangqiEngine);   
+
+    if (kingCaptured) {
+      JOptionPane.showMessageDialog(this, "Game Over");
+      System.out.println("restart ...");
+    }
   }
 
   // MouseMotionListener
@@ -169,7 +176,6 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
       g.drawLine(ORIGIN_X + 8 * i * CELL_WIDTH, ORIGIN_Y + 4 * CELL_HEIGHT, ORIGIN_X + 8 * i * CELL_WIDTH, ORIGIN_Y + 5 * CELL_HEIGHT); 
     }
   }
-
 }
 
 enum Rank {
@@ -226,12 +232,14 @@ class XiangqiEngine {
     return true;
   }
 
-  void move(Point from, Point to) {
+  boolean move(Point from, Point to) {
     XiangqiPiece movingPiece = pieceAt(from);
+    XiangqiPiece targetPiece = pieceAt(to);
     pieces.remove(movingPiece);
-    pieces.remove(pieceAt(to));
+    pieces.remove(targetPiece);
     addPiece(to.x, to.y, movingPiece.rank, movingPiece.isRed, movingPiece.imgName);
     isRedTurn = !isRedTurn;
+    return targetPiece != null && targetPiece.rank == Rank.KING;
   }
 
   private boolean isValidPawnMove(Point from, Point to, boolean isRed) {
