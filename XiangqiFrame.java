@@ -218,6 +218,8 @@ class XiangqiEngine {
         return isValidRookMove(from, to);
       case CANNON:
         return isValidCannonMove(from, to);
+      case PAWN:
+        return isValidPawnMove(from, to, movingPiece.isRed);
     }
 
     return true;
@@ -228,6 +230,15 @@ class XiangqiEngine {
     pieces.remove(movingPiece);
     pieces.remove(pieceAt(to));
     addPiece(to.x, to.y, movingPiece.rank, movingPiece.isRed, movingPiece.imgName);
+  }
+
+  private boolean isValidPawnMove(Point from, Point to, boolean isRed) {
+    boolean oneStepForward = isStraight(from, to) && (to.y - from.y) * (isRed ? 1 : -1) == 1;
+    if (inSelfSide(from, isRed)) {
+      return oneStepForward;
+    } else {
+      return isStraight(from, to) && Math.abs(from.x - to.x) == 1 || oneStepForward;
+    }
   }
 
   private boolean isValidCannonMove(Point from, Point to) {
@@ -252,7 +263,7 @@ class XiangqiEngine {
   }
 
   private boolean isValidBishopMove(Point from, Point to, boolean isRed) {
-    if (!insideSelfSide(to, isRed) || pieceAt((from.x + to.x)/2, (from.y + to.y)/2) != null) {
+    if (!inSelfSide(to, isRed) || pieceAt((from.x + to.x)/2, (from.y + to.y)/2) != null) {
       return false;
     }
 
@@ -279,7 +290,7 @@ class XiangqiEngine {
     return location.x >= 0 && location.x <= 8 && location.y >= 0 && location.y <= 9;
   }
 
-  private boolean insideSelfSide(Point location, boolean isRed) {
+  private boolean inSelfSide(Point location, boolean isRed) {
     if (!insideBoard(location)) {
       return false;
     }
