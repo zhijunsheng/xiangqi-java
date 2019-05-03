@@ -93,16 +93,16 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
       System.out.println("invalid move");   
     }
 
+    if (kingCaptured) {
+      JOptionPane.showMessageDialog(this, "Game Over");
+      xiangqiEngine.resetGame();
+    }
+
     logicalFrom = null;
     movingPieceImage = null;
     movingPieceScreenLocation = null;
     repaint();
     System.out.println(xiangqiEngine);   
-
-    if (kingCaptured) {
-      JOptionPane.showMessageDialog(this, "Game Over");
-      System.out.println("restart ...");
-    }
   }
 
   // MouseMotionListener
@@ -200,6 +200,11 @@ class XiangqiEngine {
 
   Set<XiangqiPiece> getPieces() {
     return pieces;
+  }
+
+  void resetGame() {
+    pieces = initialPieces();
+    isRedTurn = true;
   }
   
   boolean isValidMove(Point from, Point to) {
