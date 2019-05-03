@@ -176,7 +176,7 @@ enum Rank {
   PAWN,
   CANNON,
   GUARD,
-  BISHIP,
+  BISHOP,
   KNIGHT,
   ROOK,
   KING
@@ -197,7 +197,7 @@ class XiangqiEngine {
   }
 
   boolean isValidMove(Point from, Point to) {
-    if (from == null || to == null) {
+    if (from == null || to == null || !insideBoard(to)) {
       return false;
     }
 
@@ -207,19 +207,19 @@ class XiangqiEngine {
     }
 
     XiangqiPiece targetPiece = pieceAt(to.x, to.y);
-    if (targetPiece == null) {
-      switch (movingPiece.rank) {
-        case ROOK:
-          return isValidRookMove(from, to);
-        case GUARD:
-          return isValidGuardMove(from, to, movingPiece.isRed);
-        case KING: 
-          return isValidKingMove(from, to, movingPiece.isRed); 
-      }
-    } else { // capture
-      if (targetPiece.isRed == movingPiece.isRed) {
-        return false;
-      }
+    if (targetPiece != null && targetPiece.isRed == movingPiece.isRed) {
+      return false;
+    }
+
+    switch (movingPiece.rank) {
+      case ROOK:
+        return isValidRookMove(from, to);
+      case GUARD:
+        return isValidGuardMove(from, to, movingPiece.isRed);
+      case KING: 
+        return isValidKingMove(from, to, movingPiece.isRed); 
+      case BISHOP:
+        return isValidBishopMove(from, to, movingPiece.isRed);
     }
 
     return true;
@@ -230,9 +230,17 @@ class XiangqiEngine {
     pieces.remove(piece);
     addPiece(to.x, to.y, piece.rank, piece.isRed, piece.imgName);
   }
-  
+    
   private boolean isValidRookMove(Point from, Point to) {
     return false;
+  }
+
+  private boolean isValidBishopMove(Point from, Point to, boolean isRed) {
+    if (!insideSelfSide(to, isRed) || pieceAt((from.x + to.x)/2, (from.y + to.y)/2) != null) {
+      return false;
+    }
+
+    return Math.abs(from.x - to.x) == 2 && Math.abs(from.y - to.y) == 2;
   }
 
   private boolean isValidKingMove(Point from, Point to, boolean isRed) {
@@ -249,6 +257,22 @@ class XiangqiEngine {
     }
 
     return Math.abs(from.x - to.x) == 1 && Math.abs(from.y - to.y) == 1;
+  }
+
+  private boolean insideBoard(Point location) {
+    return location.x >= 0 && location.x <= 8 && location.y >= 0 && location.y <= 9;
+  }
+
+  private boolean insideSelfSide(Point location, boolean isRed) {
+    if (!insideBoard(location)) {
+      return false;
+    }
+
+    if (isRed) {
+      return location.y <= 4;
+    } else {
+      return location.y >= 5;
+    }
   }
 
   private boolean insidePalace(Point location, boolean isRed) {
@@ -270,8 +294,8 @@ class XiangqiEngine {
       addPiece(8 * i, 9, Rank.ROOK, false, "bj");
       addPiece(1 + 6 * i, 0, Rank.KNIGHT, true, "rm");
       addPiece(1 + 6 * i, 9, Rank.KNIGHT, false, "bm");
-      addPiece(2 + 4 * i, 0, Rank.BISHIP, true, "rx");
-      addPiece(2 + 4 * i, 9, Rank.BISHIP, false, "bx");
+      addPiece(2 + 4 * i, 0, Rank.BISHOP, true, "rx");
+      addPiece(2 + 4 * i, 9, Rank.BISHOP, false, "bx");
       addPiece(3 + 2 * i, 0, Rank.GUARD, true, "rs");
       addPiece(3 + 2 * i, 9, Rank.GUARD, false, "bs");
       addPiece(1 + 6 * i, 2, Rank.CANNON, true, "rp");
@@ -299,7 +323,7 @@ class XiangqiEngine {
             case PAWN: brdStr += piece.isRed ? " P" : " p"; break;
             case CANNON: brdStr += piece.isRed ? " C" : " c"; break;
             case GUARD: brdStr += piece.isRed ? " G" : " g"; break;
-            case BISHIP: brdStr += piece.isRed ? " B" : " b"; break;
+            case BISHOP: brdStr += piece.isRed ? " B" : " b"; break;
             case KNIGHT: brdStr += piece.isRed ? " N" : " n"; break;
             case ROOK: brdStr += piece.isRed ? " R" : " r"; break;
             case KING: brdStr += piece.isRed ? " K" : " k"; break;
@@ -334,5 +358,24 @@ class XiangqiPiece {
     this.rank = rank;
     this.isRed = isRed;
     this.imgName = imgName;
+  }
+
+  public String toString() {
+    return rankString() + "(" + x + ", " + y + ")";
+  }
+
+  private String rankString() {
+    String rkStr = "";
+    switch (rank) {
+      case PAWN: rkStr += isRed ? " P" : " p"; break;
+      case CANNON: rkStr += isRed ? " C" : " c"; break;
+      case GUARD: rkStr += isRed ? " G" : " g"; break;
+      case BISHOP: rkStr += isRed ? " B" : " b"; break;
+      case KNIGHT: rkStr += isRed ? " N" : " n"; break;
+      case ROOK: rkStr += isRed ? " R" : " r"; break;
+      case KING: rkStr += isRed ? " K" : " k"; break;
+    }
+    return rkStr;
+    
   }
 }
