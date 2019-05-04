@@ -121,8 +121,19 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     g.setColor(Color.black);
     drawGrid(g);
     drawPieces(g);
+    drawWhoseTurn(g);
     if (movingPieceImage != null) {
       g.drawImage(movingPieceImage, movingPieceScreenLocation.x, movingPieceScreenLocation.y, null);
+    }
+  }
+
+  private void drawWhoseTurn(Graphics g) {
+    if (xiangqiEngine.isRedTurn()) {
+      g.setColor(Color.RED);
+      g.fillRect(ORIGIN_X + XiangqiEngine.COLS * CELL_WIDTH, ORIGIN_Y, CELL_WIDTH, CELL_WIDTH);
+    } else {
+      g.setColor(Color.BLACK);
+      g.fillRect(ORIGIN_X + XiangqiEngine.COLS * CELL_WIDTH, ORIGIN_Y + (XiangqiEngine.ROWS - 1) * CELL_HEIGHT - CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
     }
   }
 
@@ -205,6 +216,10 @@ class XiangqiEngine {
   void resetGame() {
     pieces = initialPieces();
     isRedTurn = true;
+  }
+
+  boolean isRedTurn() {
+    return isRedTurn;
   }
   
   boolean isValidMove(Point from, Point to) {
