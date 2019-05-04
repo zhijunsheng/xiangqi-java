@@ -131,7 +131,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     BufferedImage img = keyNameValueImage.get(imgName);
     if (img == null) {
       try {
-        String path = imgName + ".png";
+        String path = "./img/" + imgName + ".png";
         File file = new File(path);
         img = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
         keyNameValueImage.put(imgName, img);
