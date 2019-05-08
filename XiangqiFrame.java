@@ -37,19 +37,9 @@ class XiangqiFrame extends JFrame {
     for (String imgName : names) {
         String path = "./img/" + imgName + ".png";
         File file = new File(path);
-        Image img = resize(ImageIO.read(file), XiangqiPanel.CELL_WIDTH, XiangqiPanel.CELL_WIDTH);
-        keyNameValueImage.put(imgName, img);
+        keyNameValueImage.put(imgName, ImageIO.read(file).getScaledInstance(XiangqiPanel.CELL_WIDTH, XiangqiPanel.CELL_WIDTH, Image.SCALE_SMOOTH));
     }
     return  keyNameValueImage;
-  }
-  
-  private static BufferedImage resize(BufferedImage img, int width, int height) {
-    Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-    BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d = resized.createGraphics();
-    g2d.drawImage(tmp, 0, 0, null);
-    g2d.dispose();
-    return resized;
   }
   
   public static void main(String[] args) throws IOException {
