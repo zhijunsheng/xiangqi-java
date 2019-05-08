@@ -2,6 +2,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.imageio.ImageIO;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -27,13 +28,38 @@ class XiangqiFrame extends JFrame {
     setLocation(200, 300);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
+
+  private static Map<String, Image> createPieceImages() throws IOException {
+    Map<String, Image> keyNameValueImage= new HashMap<>();
+    Set<String> names = new HashSet<>(Arrays.asList(
+          "bj", "bm", "bx", "bs", "bb", "bp", "bz", 
+          "rj", "rm", "rx", "rs", "rb", "rp", "rz"));
+    for (String imgName : names) {
+        String path = "./img/" + imgName + ".png";
+        File file = new File(path);
+        Image img = resize(ImageIO.read(file), XiangqiPanel.CELL_WIDTH, XiangqiPanel.CELL_WIDTH);
+        keyNameValueImage.put(imgName, img);
+    }
+    return  keyNameValueImage;
+  }
   
-  public static void main(String[] args) {
+  private static BufferedImage resize(BufferedImage img, int width, int height) {
+    Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = resized.createGraphics();
+    g2d.drawImage(tmp, 0, 0, null);
+    g2d.dispose();
+    return resized;
+  }
+  
+  public static void main(String[] args) throws IOException {
+    Map<String, Image> keyNameValueImage = createPieceImages();
+
     XiangqiEngine xiangqiEngine = new XiangqiEngine(XiangqiEngine.initialPieces());
     System.out.println(xiangqiEngine);   
 
     XiangqiFrame xiangqiFrame = new XiangqiFrame();
-    XiangqiPanel xiangqiPanel = new XiangqiPanel(xiangqiEngine);
+    XiangqiPanel xiangqiPanel = new XiangqiPanel(xiangqiEngine, keyNameValueImage);
     xiangqiFrame.getContentPane().add(xiangqiPanel, BorderLayout.CENTER);
     xiangqiFrame.setVisible(true);
   }
@@ -45,18 +71,18 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   final static int CELL_WIDTH = 43;
   final static int CELL_HEIGHT = 53;
 
-  private BufferedImage movingPieceImage;
+  private Image movingPieceImage;
   private Point movingPieceScreenLocation;
   private Point logicalFrom;
 
   private XiangqiEngine xiangqiEngine;
-  private Map<String, BufferedImage> keyNameValueImage;
+  private Map<String, Image> keyNameValueImage;
 
-  XiangqiPanel(XiangqiEngine xiangqiEngine) {
+  XiangqiPanel(XiangqiEngine xiangqiEngine, Map<String, Image> keyNameValueImage) {
     this.xiangqiEngine = xiangqiEngine;
+    this.keyNameValueImage = keyNameValueImage;
     addMouseListener(this);
     addMouseMotionListener(this);
-    keyNameValueImage = new HashMap<String, BufferedImage>();
   }
 
   // MouseListener
@@ -137,29 +163,8 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
     }
   }
 
-  // may return null
-  private BufferedImage getPieceImage(String imgName) {
-    BufferedImage img = keyNameValueImage.get(imgName);
-    if (img == null) {
-      try {
-        String path = "./img/" + imgName + ".png";
-        File file = new File(path);
-        img = resize(ImageIO.read(file), CELL_WIDTH, CELL_WIDTH);
-        keyNameValueImage.put(imgName, img);
-      } catch(IOException ioe) {
-        System.out.println("failed to load image " + imgName);
-      }
-    }
-    return img;
-  }
-
-  private BufferedImage resize(BufferedImage img, int width, int height) {
-    Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-    BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d = resized.createGraphics();
-    g2d.drawImage(tmp, 0, 0, null);
-    g2d.dispose();
-    return resized;
+  private Image getPieceImage(String imgName) {
+    return keyNameValueImage.get(imgName);
   }
 
   private void drawPieces(Graphics g) {
