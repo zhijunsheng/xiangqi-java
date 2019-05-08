@@ -24,7 +24,7 @@ class XiangqiFrame extends JFrame {
 
   XiangqiFrame() {
     setTitle("Xiang Qi");
-    setSize(600, 600);
+    setSize(800, 800);
     setLocation(200, 300);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
@@ -57,9 +57,9 @@ class XiangqiFrame extends JFrame {
 
 class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener {
   final static int ORIGIN_X = 83;
-  final static int ORIGIN_Y = 51;
-  final static int CELL_WIDTH = 43;
-  final static int CELL_HEIGHT = 53;
+  final static int ORIGIN_Y = 83;
+  final static int CELL_WIDTH = 67;
+  final static int CELL_HEIGHT = 67;
 
   private Image movingPieceImage;
   private Point movingPieceScreenLocation;
