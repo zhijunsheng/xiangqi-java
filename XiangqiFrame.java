@@ -441,7 +441,7 @@ class XiangqiEngine {
     for (int y = 0; y < ROWS; y++) {
       for (int x = 0; x < COLS; x++) {
         XiangqiPiece piece = pieceAt(x, y);
-        if (piece == null || piece != null) {
+        if (piece == null) {
           brdStr += " .";
         } else {
           switch (piece.rank) {
