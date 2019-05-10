@@ -82,7 +82,7 @@ class XiangqiPanel extends JPanel implements MouseListener, MouseMotionListener 
   public void mouseExited(MouseEvent me) {}
 
   private Point screenToLogical(Point screenPoint) {
-    return new Point((int)((screenPoint.x - ORIGIN_X + 0.5 * CELL_WIDTH) / CELL_WIDTH), (int)((screenPoint.y - ORIGIN_Y + 0.5 * CELL_HEIGHT) / CELL_HEIGHT));  
+    return new Point((screenPoint.x - ORIGIN_X + CELL_WIDTH/2) / CELL_WIDTH, (screenPoint.y - ORIGIN_Y + CELL_HEIGHT/2) / CELL_HEIGHT);  
   }
 
   public void mousePressed(MouseEvent me) {
@@ -441,7 +441,7 @@ class XiangqiEngine {
     for (int y = 0; y < ROWS; y++) {
       for (int x = 0; x < COLS; x++) {
         XiangqiPiece piece = pieceAt(x, y);
-        if (piece == null) {
+        if (piece == null || piece != null) {
           brdStr += " .";
         } else {
           switch (piece.rank) {
