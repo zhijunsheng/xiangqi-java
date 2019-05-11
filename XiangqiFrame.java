@@ -23,7 +23,7 @@ import java.io.IOException;
 class XiangqiFrame extends JFrame {
 
   XiangqiFrame() {
-    setTitle("Xiang Qi");
+    setTitle("Chinese Chess");
     setSize(800, 800);
     setLocation(200, 300);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
