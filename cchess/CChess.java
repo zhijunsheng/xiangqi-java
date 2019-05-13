@@ -5,6 +5,8 @@ class CChess {
   public static void main(String[] args) {
     CChessBoard brd = new CChessBoard();
     System.out.println(brd);
+    brd.movePiece(0, 0, 0, 2);
+    System.out.println(brd);
   }
 }
 
@@ -13,6 +15,167 @@ class CChessBoard {
   final static int cols = 9;
 
   private Set<Piece> pieces = new HashSet<>();
+
+  private boolean outOfBoard(int col, int row) {
+    return col < 0 || col > 8 || row < 0 || row > 9;
+  }
+
+  private boolean isStraight(int fromCol, int fromRow, int toCol, int toRow) {
+    return fromCol == toCol || fromRow == toRow;
+  }
+
+  private boolean isDiagonal(int fromCol, int fromRow, int toCol, int toRow) {
+    return Math.abs(fromCol - toCol) == Math.abs(fromRow - toRow);
+  }
+
+  private int steps(int fromCol, int fromRow, int toCol, int toRow) {
+    if (fromCol == toCol) {
+      return Math.abs(fromRow - toRow);
+    } else if (fromRow == toRow) {
+      return Math.abs(fromCol - toCol);
+    } else if (isDiagonal(fromCol, fromRow, toCol, toRow)) {
+      return Math.abs(fromRow - toRow);
+    }
+    return 0; // neither straight nor diagonal
+  }
+
+  private boolean outOfPalace(int col, int row, boolean red) {
+    if (red) {
+      return col < 3 || col > 5 || row < 0 || row > 2;
+    } else {
+      return col < 3 || col > 5 || row < 7 || row > 9;
+    }
+  }
+
+  private boolean selfSide(int row, boolean isRed) {
+    return isRed ? row <= 4 : row >= 5;
+  }
+
+  private int numPiecesBetween(int fromCol, int fromRow,
+                       int toCol, int toRow) {
+    if (!isStraight(fromCol, fromRow, toCol, toRow)
+     || steps(fromCol, fromRow, toCol, toRow) < 2) {
+      return 0;
+    }
+    int cnt = 0, head, tail;
+    if (fromCol == toCol) { // vertical
+      head = Math.min(fromRow, toRow);
+      tail = Math.max(fromRow, toRow);
+      for (int row = head + 1; row < tail; row++) {
+        cnt += (pieceAt(fromCol, row) == null) ? 0 : 1;
+      }
+    } else {
+      head = Math.min(fromCol, toCol);
+      tail = Math.max(fromCol, toCol);
+      for (int col = head + 1; col < tail; col++) {
+        cnt += (pieceAt(col, fromRow) == null) ? 0 : 1;
+      }
+    }
+    return cnt;
+  }
+
+  private boolean selfKilling(int fromCol, int fromRow,
+                      int toCol, int toRow, boolean isRed) {
+    Piece target = pieceAt(toCol, toRow);
+    return target != null && target.isRed == isRed;
+  }
+
+  private boolean isValidGuardMove(int fromCol, int fromRow, 
+                           int toCol,   int toRow, boolean isRed) {
+    if (outOfPalace(toCol, toRow, isRed)) { 
+      return false; 
+    }
+    return isDiagonal(fromCol, fromRow, toCol, toRow) && 
+           steps(fromCol, fromRow, toCol, toRow) == 1;
+  }
+
+  private boolean isValidKingMove(int fromCol, int fromRow,
+                          int toCol, int toRow, boolean isRed) {
+    if (outOfPalace(toCol, toRow, isRed)) {
+      return false;
+    }
+    return isStraight(fromCol, fromRow, toCol, toRow) &&
+                steps(fromCol, fromRow, toCol, toRow) == 1;
+  }
+
+  private boolean isValidKnightMove(int fromCol, int fromRow,
+                            int toCol,   int toRow) {
+    if (Math.abs(fromCol - toCol) == 1 &&
+        Math.abs(fromRow - toRow) == 2) {
+      return pieceAt(fromCol, (fromRow - toRow)/2) == null;
+    } else if (Math.abs(fromCol - toCol) == 2 &&
+               Math.abs(fromRow - toRow) == 1) {
+      return pieceAt((fromCol - toCol)/2, fromRow) == null;
+    }
+    return false;
+  }
+
+  private boolean isValidBishopMove(int fromCol, int fromRow, 
+                            int toCol,   int toRow, boolean isRed) {
+    return selfSide(toRow, isRed) 
+        && pieceAt((fromCol + toCol)/2, (fromRow + toRow)/2) != null
+        && isDiagonal(fromCol, fromRow, toCol, toRow)
+        && steps(fromCol, fromRow, toCol, toRow) == 2;
+  }
+
+  private boolean isValidRookMove(int fromCol, int fromRow,
+                          int toCol,   int toRow) {
+    return isStraight(fromCol, fromRow, toCol, toRow)
+        && numPiecesBetween(fromCol, fromRow, toCol, toRow) == 0;
+  }
+
+  private boolean isValidCannonMove(int fromCol, int fromRow,
+                            int toCol,   int toRow) {
+    if (pieceAt(toCol, toRow) == null) {
+      return isValidRookMove(fromCol, fromRow, toCol, toRow);
+    }
+    return numPiecesBetween(fromCol, fromRow, toCol, toRow) == 1;
+  }
+
+  private boolean isValidPawnMove(int fromCol, int fromRow,
+                          int toCol,   int toRow, boolean isRed) {
+    if (steps(fromCol, fromRow, toCol, toRow) != 1) {
+      return false;
+    }
+    return isRed && toRow > fromRow // stepping forward
+        || !selfSide(fromRow, isRed);
+  }
+
+  boolean validMove(int fromC, int fromR, int toC, int toR) {
+    if (fromC == toC && fromR == toR // not moving
+     || outOfBoard(toC, toR)) {
+      return false;
+    }
+    Piece p = pieceAt(fromC, fromR);
+    if (p == null || selfKilling(fromC, fromR, toC, toR, p.isRed)) {
+      return false;
+    }
+    boolean ok = false;
+    switch (p.rank) {
+      case GUARD:
+        ok = isValidGuardMove(fromC, fromR, toC, toR, p.isRed);
+        break;
+      case KING:
+        ok = isValidKingMove(fromC, fromR, toC, toR, p.isRed);
+        break;
+      case BISHOP:
+        ok = isValidBishopMove(fromC, fromR, toC, toR, p.isRed);
+        break;
+      case KNIGHT:
+        ok = isValidKnightMove(fromC, fromR, toC, toR);
+        break;
+      case ROOK:
+        ok = isValidRookMove(fromC, fromR, toC, toR);
+        break;
+      case CANNON:
+        ok = isValidCannonMove(fromC, fromR, toC, toR);
+        break;
+      case PAWN:
+        ok = isValidPawnMove(fromC, fromR, toC, toR, p.isRed);
+        break;
+    }
+    return ok;
+  }
 
   CChessBoard() {
     for (int i = 0; i < 2; i++) {
@@ -34,6 +197,14 @@ class CChessBoard {
       pieces.add(new Piece(i * 2, 3, true, Rank.PAWN));
       pieces.add(new Piece(i * 2, 6, false, Rank.PAWN));
     }
+  }
+
+  void movePiece(int fromCol, int fromRow, int toCol, int toRow) {
+    Piece movingP = pieceAt(fromCol, fromRow);
+    Piece targetP = pieceAt(toCol, toRow);
+    pieces.remove(movingP);
+    pieces.remove(targetP);
+    pieces.add(new Piece(toCol, toRow, movingP.isRed, movingP.rank));
   }
 
   private Piece pieceAt(int col, int row) {
