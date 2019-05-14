@@ -3,30 +3,60 @@ import java.util.HashSet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Graphics;
+import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
 
 class CChess {
+  static Map<String, Image> keyNameValueImage = new HashMap<>();
+
   CChess() {
+    CChessBoard brd = new CChessBoard();
+    System.out.println(brd);
+
     JFrame f = new JFrame("Chinese Chess");
     f.setSize(800, 800);
     f.setLocation(50, 50);
-    CChessPanel cchessPanel = new CChessPanel();
-    f.add(cchessPanel);
+    f.add(new CChessPanel(brd));
     f.setVisible(true);
   }
 
-  public static void main(String[] args) {
-    CChessBoard brd = new CChessBoard();
-    System.out.println(brd);
+  public static void main(String[] args) throws IOException {
+    Set<String> imgNames = new HashSet<>(Arrays.asList(
+          "bj", "bm", "bx", "bs", "bb", "bp", "bz",
+          "rj", "rm", "rx", "rs", "rb", "rp", "rz"));
+    for (String imgName : imgNames) {
+      File imgFile = new File("../img/" + imgName + ".png");
+      keyNameValueImage.put(imgName, ImageIO.read(imgFile).getScaledInstance(CChessPanel.side, CChessPanel.side, Image.SCALE_SMOOTH)); 
+    }
     new CChess();
   }
 }
 
 class CChessPanel extends JPanel {
-  int orgX = 83, orgY = 83, side = 67;
+  static int orgX = 83, orgY = 83, side = 67;
+
+  private CChessBoard brd;
+
+  CChessPanel(CChessBoard brd) {
+    this.brd = brd;
+  }
 
   @Override
   public void paintComponent(Graphics g) {
     drawGrid(g);
+    drawPieces(g);
+  }
+
+  private void drawPieces(Graphics g) {
+    for (Piece p : brd.getPieces()) {
+      Image img = CChess.keyNameValueImage.get(p.imgName);
+      g.drawImage(img, orgX + side * p.col - side/2, orgY + side * p.row - side/2, this);
+    }
   }
 
   private void drawGrid(Graphics g) {
@@ -91,6 +121,10 @@ class CChessBoard {
   final static int cols = 9;
 
   private Set<Piece> pieces = new HashSet<>();
+
+  Set<Piece> getPieces() {
+    return pieces;
+  }
 
   private boolean outOfBoard(int col, int row) {
     return col < 0 || col > 8 || row < 0 || row > 9;
@@ -255,23 +289,23 @@ class CChessBoard {
 
   CChessBoard() {
     for (int i = 0; i < 2; i++) {
-      pieces.add(new Piece(0 + i * 8, 0, true, Rank.ROOK));
-      pieces.add(new Piece(1 + i * 6, 0, true, Rank.KNIGHT));
-      pieces.add(new Piece(2 + i * 4, 0, true, Rank.BISHOP));
-      pieces.add(new Piece(3 + i * 2, 0, true, Rank.GUARD));
-      pieces.add(new Piece(1 + i * 6, 2, true, Rank.CANNON));
+      pieces.add(new Piece(0 + i * 8, 0, true, Rank.ROOK, "rj"));
+      pieces.add(new Piece(1 + i * 6, 0, true, Rank.KNIGHT, "rm"));
+      pieces.add(new Piece(2 + i * 4, 0, true, Rank.BISHOP, "rx"));
+      pieces.add(new Piece(3 + i * 2, 0, true, Rank.GUARD, "rs"));
+      pieces.add(new Piece(1 + i * 6, 2, true, Rank.CANNON, "rp"));
       
-      pieces.add(new Piece(0 + i * 8, 9, false, Rank.ROOK));
-      pieces.add(new Piece(1 + i * 6, 9, false, Rank.KNIGHT));
-      pieces.add(new Piece(2 + i * 4, 9, false, Rank.BISHOP));
-      pieces.add(new Piece(3 + i * 2, 9, false, Rank.GUARD));
-      pieces.add(new Piece(1 + i * 6, 7, false, Rank.CANNON));
+      pieces.add(new Piece(0 + i * 8, 9, false, Rank.ROOK, "bj"));
+      pieces.add(new Piece(1 + i * 6, 9, false, Rank.KNIGHT, "bm"));
+      pieces.add(new Piece(2 + i * 4, 9, false, Rank.BISHOP, "bx"));
+      pieces.add(new Piece(3 + i * 2, 9, false, Rank.GUARD, "bs"));
+      pieces.add(new Piece(1 + i * 6, 7, false, Rank.CANNON, "bp"));
     }
-    pieces.add(new Piece(4, 0, true, Rank.KING));
-    pieces.add(new Piece(4, 9, false, Rank.KING));
+    pieces.add(new Piece(4, 0, true, Rank.KING, "rb"));
+    pieces.add(new Piece(4, 9, false, Rank.KING, "bb"));
     for (int i = 0; i < 5; i++) {
-      pieces.add(new Piece(i * 2, 3, true, Rank.PAWN));
-      pieces.add(new Piece(i * 2, 6, false, Rank.PAWN));
+      pieces.add(new Piece(i * 2, 3, true, Rank.PAWN, "rz"));
+      pieces.add(new Piece(i * 2, 6, false, Rank.PAWN, "bz"));
     }
   }
 
@@ -280,7 +314,7 @@ class CChessBoard {
     Piece targetP = pieceAt(toCol, toRow);
     pieces.remove(movingP);
     pieces.remove(targetP);
-    pieces.add(new Piece(toCol, toRow, movingP.isRed, movingP.rank));
+    pieces.add(new Piece(toCol, toRow, movingP.isRed, movingP.rank, movingP.imgName));
   }
 
   private Piece pieceAt(int col, int row) {
@@ -339,11 +373,13 @@ class Piece {
   int row;
   boolean isRed;
   Rank rank;
+  String imgName;
 
-  Piece(int col, int row, boolean isRed, Rank rank) {
+  Piece(int col, int row, boolean isRed, Rank rank, String imgName) {
     this.col = col;
     this.row = row;
     this.isRed = isRed;
     this.rank = rank;
+    this.imgName = imgName;
   }
 }
