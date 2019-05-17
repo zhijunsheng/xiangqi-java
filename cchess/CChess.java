@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 class CChess {
   static Map<String, Image> keyNameValueImage = new HashMap<>();
@@ -37,14 +39,21 @@ class CChess {
   }
 }
 
-class CChessPanel extends JPanel {
+class CChessPanel extends JPanel implements MouseListener {
   static int orgX = 83, orgY = 83, side = 67;
 
   private CChessBoard brd;
 
   CChessPanel(CChessBoard brd) {
     this.brd = brd;
+    addMouseListener(this);
   }
+
+  public void mousePressed(MouseEvent me) {}
+  public void mouseReleased(MouseEvent me) {}
+  public void mouseClicked(MouseEvent me) {}
+  public void mouseEntered(MouseEvent me) {}
+  public void mouseExited(MouseEvent me) {}
 
   @Override
   public void paintComponent(Graphics g) {
