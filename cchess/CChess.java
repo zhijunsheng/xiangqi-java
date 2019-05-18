@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
+import java.awt.Point;
+import java.awt.event.MouseMotionListener;
 
 class CChess {
   static Map<String, Image> keyNameValueImage = new HashMap<>();
@@ -39,30 +41,72 @@ class CChess {
   }
 }
 
-class CChessPanel extends JPanel implements MouseListener {
+class CChessPanel extends JPanel implements MouseListener, MouseMotionListener {
   static int orgX = 83, orgY = 83, side = 67;
 
   private CChessBoard brd;
+  private Point fromColRow;
+  private Point movingPieceXY;
+  private Image movingPieceImage;
 
   CChessPanel(CChessBoard brd) {
     this.brd = brd;
     addMouseListener(this);
+    addMouseMotionListener(this);
   }
 
-  public void mousePressed(MouseEvent me) {}
-  public void mouseReleased(MouseEvent me) {}
+  private Point xyToColRow(Point xy) {
+    return new Point((xy.x - orgX + side/2)/side, (xy.y - orgY + side/2)/side);
+  }
+
+  public void mousePressed(MouseEvent me) {
+    fromColRow = xyToColRow(me.getPoint());
+    Piece movingPiece = brd.pieceAt(fromColRow.x, fromColRow.y);
+    if (movingPiece != null) {
+      movingPieceImage = CChess.keyNameValueImage.get(movingPiece.imgName);
+    }
+  }
+  
+  public void mouseReleased(MouseEvent me) {
+    if (fromColRow == null) return;
+    Point toColRow = xyToColRow(me.getPoint());
+    if (brd.validMove(fromColRow.x, fromColRow.y, toColRow.x, toColRow.y)) {
+      brd.movePiece(fromColRow.x, fromColRow.y, toColRow.x, toColRow.y);
+      System.out.println(brd);
+    }
+
+    fromColRow = null;
+    movingPieceXY = null;
+    movingPieceImage = null;
+    repaint();
+  }
+
   public void mouseClicked(MouseEvent me) {}
   public void mouseEntered(MouseEvent me) {}
   public void mouseExited(MouseEvent me) {}
+
+  public void mouseDragged(MouseEvent me) {
+    Point mouseTip = me.getPoint();
+    movingPieceXY = new Point(mouseTip.x - side/2, mouseTip.y - side/2);
+    repaint();
+  }
+
+  public void mouseMoved(MouseEvent me) {}
 
   @Override
   public void paintComponent(Graphics g) {
     drawGrid(g);
     drawPieces(g);
+    if (movingPieceImage != null) {
+      g.drawImage(movingPieceImage, movingPieceXY.x, movingPieceXY.y, null);
+    }
   }
 
   private void drawPieces(Graphics g) {
     for (Piece p : brd.getPieces()) {
+      if (fromColRow != null && fromColRow.x == p.col && fromColRow.y == p.row) {
+        continue; // skip moving piece since its image is drawn as movingPieceImage
+      }
       Image img = CChess.keyNameValueImage.get(p.imgName);
       g.drawImage(img, orgX + side * p.col - side/2, orgY + side * p.row - side/2, this);
     }
@@ -326,7 +370,7 @@ class CChessBoard {
     pieces.add(new Piece(toCol, toRow, movingP.isRed, movingP.rank, movingP.imgName));
   }
 
-  private Piece pieceAt(int col, int row) {
+  Piece pieceAt(int col, int row) {
     for (Piece piece : pieces) {
       if (piece.col == col && piece.row == row) {
         return piece;
