@@ -34,7 +34,7 @@ class CChess {
           "bj", "bm", "bx", "bs", "bb", "bp", "bz",
           "rj", "rm", "rx", "rs", "rb", "rp", "rz"));
     for (String imgName : imgNames) {
-      File imgFile = new File("../img/" + imgName + ".png");
+      File imgFile = new File("./img/" + imgName + ".png");
       keyNameValueImage.put(imgName, ImageIO.read(imgFile).getScaledInstance(CChessPanel.side, CChessPanel.side, Image.SCALE_SMOOTH)); 
     }
     new CChess();
