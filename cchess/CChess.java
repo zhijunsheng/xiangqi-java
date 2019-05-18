@@ -174,6 +174,7 @@ class CChessBoard {
   final static int cols = 9;
 
   private Set<Piece> pieces = new HashSet<>();
+  private boolean isRedTurn = true;
 
   Set<Piece> getPieces() {
     return pieces;
@@ -306,7 +307,7 @@ class CChessBoard {
       return false;
     }
     Piece p = pieceAt(fromC, fromR);
-    if (p == null || selfKilling(fromC, fromR, toC, toR, p.isRed)) {
+    if (p == null || p.isRed != isRedTurn || selfKilling(fromC, fromR, toC, toR, p.isRed)) {
       return false;
     }
     boolean ok = false;
@@ -364,6 +365,7 @@ class CChessBoard {
     pieces.remove(movingP);
     pieces.remove(targetP);
     pieces.add(new Piece(toCol, toRow, movingP.isRed, movingP.rank, movingP.imgName));
+    isRedTurn = !isRedTurn;
   }
 
   Piece pieceAt(int col, int row) {
