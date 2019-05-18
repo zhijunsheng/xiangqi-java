@@ -263,12 +263,10 @@ class CChessBoard {
 
   private boolean isValidKnightMove(int fromCol, int fromRow,
                             int toCol,   int toRow) {
-    if (Math.abs(fromCol - toCol) == 1 &&
-        Math.abs(fromRow - toRow) == 2) {
-      return pieceAt(fromCol, (fromRow - toRow)/2) == null;
-    } else if (Math.abs(fromCol - toCol) == 2 &&
-               Math.abs(fromRow - toRow) == 1) {
-      return pieceAt((fromCol - toCol)/2, fromRow) == null;
+    if (Math.abs(fromCol - toCol) == 1 && Math.abs(fromRow - toRow) == 2) {
+      return pieceAt(fromCol, (fromRow + toRow)/2) == null;
+    } else if (Math.abs(fromCol - toCol) == 2 && Math.abs(fromRow - toRow) == 1) {
+      return pieceAt((fromCol + toCol)/2, fromRow) == null;
     }
     return false;
   }
@@ -276,7 +274,7 @@ class CChessBoard {
   private boolean isValidBishopMove(int fromCol, int fromRow, 
                             int toCol,   int toRow, boolean isRed) {
     return selfSide(toRow, isRed) 
-        && pieceAt((fromCol + toCol)/2, (fromRow + toRow)/2) != null
+        && pieceAt((fromCol + toCol)/2, (fromRow + toRow)/2) == null
         && isDiagonal(fromCol, fromRow, toCol, toRow)
         && steps(fromCol, fromRow, toCol, toRow) == 2;
   }
@@ -295,13 +293,11 @@ class CChessBoard {
     return numPiecesBetween(fromCol, fromRow, toCol, toRow) == 1;
   }
 
-  private boolean isValidPawnMove(int fromCol, int fromRow,
-                          int toCol,   int toRow, boolean isRed) {
+  private boolean isValidPawnMove(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
     if (steps(fromCol, fromRow, toCol, toRow) != 1) {
       return false;
     }
-    return isRed && toRow > fromRow // stepping forward
-        || !selfSide(fromRow, isRed);
+    return isRed && toRow > fromRow || !isRed && toRow < fromRow || !selfSide(fromRow, isRed);
   }
 
   boolean validMove(int fromC, int fromR, int toC, int toR) {
