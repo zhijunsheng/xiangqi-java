@@ -8,8 +8,11 @@ class CChess {
 class CChessBoard {
   public String toString() {
     String brdStr = "";
-    for (int col = 0; col < 9; col++) {
-      brdStr += ". ";
+    for (int row = 0; row < 10; row++) {
+      for (int col = 0; col < 9; col++) {
+        brdStr += ". ";
+      }
+      brdStr += "\n";
     }
     return brdStr;
   } 
