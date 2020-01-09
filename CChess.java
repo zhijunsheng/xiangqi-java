@@ -1,6 +1,41 @@
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Graphics;
+
+class CChessPanel extends JPanel{
+  @Override
+  public void paintComponent(Graphics g) {
+      int orgX = 130;
+      int orgY = 100;
+      int cSpace = 40;
+      for (int i = 0; i < 9; i++) {
+        g.drawLine(orgX + i * cSpace, orgY, orgX + i * cSpace, orgY + cSpace * 4); 
+        g.drawLine(orgX + i * cSpace, orgY + cSpace * 5, orgX + i * cSpace, orgY + cSpace * 9);
+      }
+      g.drawLine(orgX, orgY + cSpace * 4, orgX, orgY + cSpace * 5);
+      g.drawLine(orgX + cSpace * 8, orgY + cSpace * 4, orgX + cSpace * 8, orgY + cSpace * 5);
+      for (int j = 0; j < 10;j++) {
+        g.drawLine(orgX, orgY + j * cSpace, orgX + cSpace * 8, orgY + j * cSpace);
+      }
+      g.drawLine(orgX + cSpace * 3, orgY, orgX + cSpace * 5, orgY + cSpace * 2);
+      g.drawLine(orgX + cSpace * 5, orgY, orgX + cSpace * 3, orgY + cSpace * 2);
+      g.drawLine(orgX + cSpace * 3, orgY + cSpace * 7, orgX + cSpace * 5, orgY + cSpace * 9);
+      g.drawLine(orgX + cSpace * 5, orgY + cSpace * 7, orgX + cSpace * 3, orgY + cSpace * 9);
+  }
+}
+
 class CChess {
+  CChess(){
+    JFrame f = new JFrame("my brain is dead");  
+    f.setSize(600,600);
+    f.setLocation(30,40);
+    CChessPanel brainDead = new CChessPanel();
+    f.add(brainDead);
+    f.setVisible(true);
+  }
 
   public static void main (String[] args){
+    new CChess();
     CChessBoard brd = new CChessBoard();
     System.out.println(brd);
     
