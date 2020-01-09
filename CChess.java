@@ -5,9 +5,10 @@ import java.awt.Graphics;
 class CChessPanel extends JPanel{
   @Override
   public void paintComponent(Graphics g) {
-      int orgX = 130;
-      int orgY = 100;
-      int cSpace = 40;
+      int cSpace = 50;
+      int orgX = (getWidth() - cSpace * 8) / 2;
+      int orgY = (getHeight() - cSpace * 9) / 2;
+      System.out.println(getSize());
       for (int i = 0; i < 9; i++) {
         g.drawLine(orgX + i * cSpace, orgY, orgX + i * cSpace, orgY + cSpace * 4); 
         g.drawLine(orgX + i * cSpace, orgY + cSpace * 5, orgX + i * cSpace, orgY + cSpace * 9);
@@ -27,7 +28,7 @@ class CChessPanel extends JPanel{
 class CChess {
   CChess(){
     JFrame f = new JFrame("my brain is dead");  
-    f.setSize(600,600);
+    f.setSize(600,622);
     f.setLocation(30,40);
     CChessPanel brainDead = new CChessPanel();
     f.add(brainDead);
