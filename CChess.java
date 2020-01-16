@@ -3,12 +3,26 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 
 class CChessPanel extends JPanel{
+  int cSpace = 70;
+  int orgX = 20;//(getWidth() - cSpace * 8) / 2;
+  int orgY = 20;//(getHeight() - cSpace * 9) / 2;
+  
+  private void drawStar(Graphics g) {
+      int sLength = cSpace / 4;
+      int refX = cSpace / 15;
+      int refY = cSpace / 15;
+      g.drawLine(orgX + cSpace - refX , orgY + cSpace * 2 - sLength - refY, orgX + cSpace - refX, orgY + cSpace * 2 - refY); 
+      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 - refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 - refY);
+      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + sLength + refY, orgX + cSpace - refX, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 + refY, orgX + cSpace + refX + sLength, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 + sLength + refY, orgX + cSpace + refX, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 - sLength - refY, orgX + cSpace + refX, orgY + cSpace * 2 - refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 - refY, orgX + cSpace + sLength + refX, orgY + cSpace * 2 - refY);
+  }
+
   @Override
   public void paintComponent(Graphics g) {
-      int cSpace = 50;
-      int orgX = (getWidth() - cSpace * 8) / 2;
-      int orgY = (getHeight() - cSpace * 9) / 2;
-      System.out.println(getSize());
       for (int i = 0; i < 9; i++) {
         g.drawLine(orgX + i * cSpace, orgY, orgX + i * cSpace, orgY + cSpace * 4); 
         g.drawLine(orgX + i * cSpace, orgY + cSpace * 5, orgX + i * cSpace, orgY + cSpace * 9);
@@ -22,6 +36,21 @@ class CChessPanel extends JPanel{
       g.drawLine(orgX + cSpace * 5, orgY, orgX + cSpace * 3, orgY + cSpace * 2);
       g.drawLine(orgX + cSpace * 3, orgY + cSpace * 7, orgX + cSpace * 5, orgY + cSpace * 9);
       g.drawLine(orgX + cSpace * 5, orgY + cSpace * 7, orgX + cSpace * 3, orgY + cSpace * 9);
+
+      drawStar(g);
+/*    
+      int sLength = cSpace / 4;
+      int refX = cSpace / 15;
+      int refY = cSpace / 15;
+      g.drawLine(orgX + cSpace - refX , orgY + cSpace * 2 - sLength - refY, orgX + cSpace - refX, orgY + cSpace * 2 - refY); 
+      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 - refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 - refY);
+      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + sLength + refY, orgX + cSpace - refX, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 + refY, orgX + cSpace + refX + sLength, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 + sLength + refY, orgX + cSpace + refX, orgY + cSpace * 2 + refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 - sLength - refY, orgX + cSpace + refX, orgY + cSpace * 2 - refY);
+      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 - refY, orgX + cSpace + sLength + refX, orgY + cSpace * 2 - refY);
+*/
   }
 }
 
