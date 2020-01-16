@@ -7,10 +7,11 @@ class CChessPanel extends JPanel{
   int orgX = 20;//(getWidth() - cSpace * 8) / 2;
   int orgY = 20;//(getHeight() - cSpace * 9) / 2;
   
-  private void drawStar(Graphics g) {
+  private void drawStar(Graphics g, int col, int row) {
       int sLength = cSpace / 4;
       int refX = cSpace / 15;
       int refY = cSpace / 15;
+      
       g.drawLine(orgX + cSpace - refX , orgY + cSpace * 2 - sLength - refY, orgX + cSpace - refX, orgY + cSpace * 2 - refY); 
       g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 - refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 - refY);
       g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 + refY);
@@ -37,7 +38,7 @@ class CChessPanel extends JPanel{
       g.drawLine(orgX + cSpace * 3, orgY + cSpace * 7, orgX + cSpace * 5, orgY + cSpace * 9);
       g.drawLine(orgX + cSpace * 5, orgY + cSpace * 7, orgX + cSpace * 3, orgY + cSpace * 9);
 
-      drawStar(g);
+      drawStar(g, 1, 2);
 /*    
       int sLength = cSpace / 4;
       int refX = cSpace / 15;
