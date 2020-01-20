@@ -12,14 +12,14 @@ class CChessPanel extends JPanel{
       int refX = cSpace / 15;
       int refY = cSpace / 15;
       
-      g.drawLine(orgX + cSpace - refX , orgY + cSpace * 2 - sLength - refY, orgX + cSpace - refX, orgY + cSpace * 2 - refY); 
-      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 - refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 - refY);
-      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + refY, orgX + cSpace - refX - sLength, orgY + cSpace * 2 + refY);
-      g.drawLine(orgX + cSpace - refX, orgY + cSpace * 2 + sLength + refY, orgX + cSpace - refX, orgY + cSpace * 2 + refY);
-      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 + refY, orgX + cSpace + refX + sLength, orgY + cSpace * 2 + refY);
-      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 + sLength + refY, orgX + cSpace + refX, orgY + cSpace * 2 + refY);
-      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 - sLength - refY, orgX + cSpace + refX, orgY + cSpace * 2 - refY);
-      g.drawLine(orgX + cSpace + refX, orgY + cSpace * 2 - refY, orgX + cSpace + sLength + refX, orgY + cSpace * 2 - refY);
+      g.drawLine(orgX + cSpace * col- refX, orgY + cSpace * row - sLength - refY, orgX + cSpace * col - refX, orgY + cSpace * row - refY); 
+      g.drawLine(orgX + cSpace * col- refX, orgY + cSpace * row - refY, orgX + cSpace * col - refX - sLength, orgY + cSpace * row - refY);
+      g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row + refY, orgX + cSpace * col - refX - sLength, orgY + cSpace * row + refY);
+      g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row + sLength + refY, orgX + cSpace * col - refX, orgY + cSpace * row + refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + refY, orgX + cSpace * col + refX + sLength, orgY + cSpace * row+ refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + sLength + refY, orgX + cSpace * col + refX, orgY + cSpace * row + refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row - sLength - refY, orgX + cSpace * col + refX, orgY + cSpace * row - refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row - refY, orgX + cSpace * col + sLength + refX, orgY + cSpace * row - refY);
   }
 
   @Override
@@ -38,7 +38,12 @@ class CChessPanel extends JPanel{
       g.drawLine(orgX + cSpace * 3, orgY + cSpace * 7, orgX + cSpace * 5, orgY + cSpace * 9);
       g.drawLine(orgX + cSpace * 5, orgY + cSpace * 7, orgX + cSpace * 3, orgY + cSpace * 9);
 
+      drawStar(g, 0, 3);
       drawStar(g, 1, 2);
+      drawStar(g, 2, 3);
+      drawStar(g, 4, 3);
+      drawStar(g, 6, 3);
+     
 /*    
       int sLength = cSpace / 4;
       int refX = cSpace / 15;
