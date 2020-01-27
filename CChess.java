@@ -3,10 +3,10 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 
 class CChessPanel extends JPanel{
-  int cSpace = 70;
-  int orgX = 20;//(getWidth() - cSpace * 8) / 2;
-  int orgY = 20;//(getHeight() - cSpace * 9) / 2;
-  
+  int cSpace = 60;
+  int orgX = -50000; 
+  int orgY = -50000; 
+ 
   private void drawStar(Graphics g, int col, int row) {
       int sLength = cSpace / 4;
       int refX = cSpace / 15;
@@ -16,14 +16,37 @@ class CChessPanel extends JPanel{
       g.drawLine(orgX + cSpace * col- refX, orgY + cSpace * row - refY, orgX + cSpace * col - refX - sLength, orgY + cSpace * row - refY);
       g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row + refY, orgX + cSpace * col - refX - sLength, orgY + cSpace * row + refY);
       g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row + sLength + refY, orgX + cSpace * col - refX, orgY + cSpace * row + refY);
-      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + refY, orgX + cSpace * col + refX + sLength, orgY + cSpace * row+ refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + refY, orgX + cSpace * col + refX + sLength, orgY + cSpace * row + refY);
       g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + sLength + refY, orgX + cSpace * col + refX, orgY + cSpace * row + refY);
       g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row - sLength - refY, orgX + cSpace * col + refX, orgY + cSpace * row - refY);
       g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row - refY, orgX + cSpace * col + sLength + refX, orgY + cSpace * row - refY);
   }
+  private void drawLstar(Graphics g, int col, int row) {
+      int sLength = cSpace / 4;
+      int refX = cSpace / 15;
+      int refY = cSpace / 15;
+ 
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + refY, orgX + cSpace * col + refX + sLength, orgY + cSpace * row + refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row + sLength + refY, orgX + cSpace * col + refX, orgY + cSpace * row + refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row - sLength - refY, orgX + cSpace * col + refX, orgY + cSpace * row - refY);
+      g.drawLine(orgX + cSpace * col + refX, orgY + cSpace * row - refY, orgX + cSpace * col + sLength + refX, orgY + cSpace * row - refY);
+  }
+  private void drawRstar(Graphics g, int col, int row) {
+      int sLength = cSpace / 4;
+      int refX = cSpace / 15;
+      int refY = cSpace / 15;
+
+      g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row - sLength - refY, orgX + cSpace * col - refX, orgY + cSpace * row - refY);
+      g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row - refY, orgX + cSpace * col - refX - sLength, orgY + cSpace * row - refY);
+      g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row + refY, orgX + cSpace * col - refX - sLength, orgY + cSpace * row + refY);
+      g.drawLine(orgX + cSpace * col - refX, orgY + cSpace * row + sLength + refY, orgX + cSpace * col - refX, orgY + cSpace * row + refY);
+  }
 
   @Override
   public void paintComponent(Graphics g) {
+      orgX = (getWidth() - cSpace * 8) / 2;
+      orgY = (getHeight() - cSpace * 9) / 2;
+      System.out.println("" + orgX + " " +  getWidth() + " getHeight() = " + getHeight());
       for (int i = 0; i < 9; i++) {
         g.drawLine(orgX + i * cSpace, orgY, orgX + i * cSpace, orgY + cSpace * 4); 
         g.drawLine(orgX + i * cSpace, orgY + cSpace * 5, orgX + i * cSpace, orgY + cSpace * 9);
@@ -38,12 +61,20 @@ class CChessPanel extends JPanel{
       g.drawLine(orgX + cSpace * 3, orgY + cSpace * 7, orgX + cSpace * 5, orgY + cSpace * 9);
       g.drawLine(orgX + cSpace * 5, orgY + cSpace * 7, orgX + cSpace * 3, orgY + cSpace * 9);
 
-      drawStar(g, 0, 3);
+      drawLstar(g, 0, 3);
       drawStar(g, 1, 2);
       drawStar(g, 2, 3);
       drawStar(g, 4, 3);
       drawStar(g, 6, 3);
-     
+      drawStar(g, 7, 2);
+      drawRstar(g, 8, 3 );
+      drawLstar(g, 0, 6);
+      drawStar(g, 1, 7);
+      drawStar(g, 2, 6);
+      drawStar(g, 4, 6);
+      drawStar(g, 6, 6);
+      drawStar(g, 7, 7);
+      drawRstar(g, 8, 6); 
 /*    
       int sLength = cSpace / 4;
       int refX = cSpace / 15;
@@ -62,7 +93,7 @@ class CChessPanel extends JPanel{
 
 class CChess {
   CChess(){
-    JFrame f = new JFrame("my brain is dead");  
+    JFrame f = new JFrame("CChess Board");  
     f.setSize(600,622);
     f.setLocation(30,40);
     CChessPanel brainDead = new CChessPanel();
