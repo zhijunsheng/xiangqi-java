@@ -183,27 +183,6 @@ class CChess {
     CChessBoard brd = new CChessBoard();
     System.out.println(brd);
     
-  //  CPiece redKing = new CPiece();
-/*
-    Student studentA = new Student("John", 12);
-    System.out.println("Name: " + studentA.name + " Age: " + studentA.age);
-
-    int[] ints = new int[]{4, 3, 6, 0};
-    // System.out.println(ints[0]);
-    // System.out.println(ints[1]);
-    for (int i = 0; i < ints.length; i++) {
-      System.out.println(ints[i]);
-    }
-
-    Student[] team = new Student[] {
-      new Student("John", 12),
-      new Student("Michael", 142),
-      new Student("Susan", 52),
-    };
-    for (int i = 0; i < team.length; i++) {
-      System.out.println("Name: " + team[i].name + "  " +  " Age: " + team[i].age);
-    }
-*/
   }
 }
 
@@ -226,18 +205,6 @@ class CChessBoard {
     }
     return brdStr;
   }
-}
-
-class Student {
-  String name;
-  int age;
-
-  // constructor
-  Student(String theName, int theAge) {
-    name = theName;
-    age = theAge;
-  }
-  
 }
 
 class CPiece {
@@ -268,4 +235,3 @@ class CPiece {
     return brdStr;
   }
 }
-// try to design a class for our pieces
