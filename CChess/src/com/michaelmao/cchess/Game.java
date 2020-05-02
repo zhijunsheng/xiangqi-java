@@ -2,6 +2,9 @@ package com.michaelmao.cchess;
 
 public class Game {
 	
+	
+	
+	
 	static CChessBoard board = new CChessBoard();
 	
 	public static void main(String args[]) {
