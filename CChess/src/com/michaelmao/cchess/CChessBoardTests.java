@@ -20,8 +20,14 @@ class CChessBoardTests {
 		assertTrue(board.canMoveRook(0, 0, 8, 0));
 		assertFalse(board.canMoveRook(0, 0, 2, 3));
 
-
-
+	}
+	
+	void testCannon() {
+		CChessBoard board = new CChessBoard();
+		
+		assertTrue(board.canMoveCannon(1, 1, 2, 1));
+		assertTrue(board.canMoveCannon(1, 1, 1, 8));
+		assertFalse(board.canMoveCannon(1, 1, 2, 2));
 	}
 
 	@Test
