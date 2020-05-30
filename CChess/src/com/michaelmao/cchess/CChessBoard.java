@@ -182,7 +182,6 @@ public class CChessBoard {
 		for(int i = 0; i < pieceLocations.size(); i++) {
 			if(location == pieceLocations.get(i)) {
 				return true;
-				
 			}
 		}
 		
@@ -197,4 +196,6 @@ public class CChessBoard {
 		
 		return piece.rank;
 	}
+	
+	
 }
