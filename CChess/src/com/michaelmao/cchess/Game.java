@@ -33,10 +33,7 @@ public class Game {
 	static int pieceSize = 67;
 	
 	public static void main(String args[]) throws IOException {
-		board.pieces.add(new CChessPiece(0, 0, false, 'R'));
-		board.fillLocations();
-		board.printBoard();
-		
+		System.out.println(board.toString());
 		
 		
 		redRookImg = imgConverter("rj");

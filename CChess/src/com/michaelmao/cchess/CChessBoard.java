@@ -1,51 +1,43 @@
 package com.michaelmao.cchess;
 
 import java.util.ArrayList;
-
 import java.util.List;
+
+enum MoveDirection {
+	left, right, up, down;
+}
 
 public class CChessBoard {
 	List<CChessPiece> pieces = new ArrayList<CChessPiece>();
-	
-    
-	
+
 	String desc = "";
 	
-	
-	
-	List<Integer> pieceLocations = new ArrayList<Integer>();
-	
-	public void fillLocations() {
-		for(int i = 0; i < pieces.size(); i++) {
-			int row = pieces.get(i).row;
-			int col = pieces.get(i).col;
-			
-			int total = row * 9 + col;
-			
-			pieceLocations.add(total);
-		}
-	}
-	
 	public void movePiece(int col, int row, int newCol, int newRow) {
-		int total = row * 9 + col;
 		
-		for(int i = 0; i < pieceLocations.size(); i++) {
-			if(total == pieceLocations.get(i)) {
-				pieces.get(i).row = newRow;
-				pieces.get(i).col = newCol;
-				pieceLocations.clear();
-				fillLocations();
-				printBoard();
-			}
-		}
 	}
 	
 	public boolean canMoveRook(int fromCol, int fromRow, int toCol, int toRow) {
-		if(fromCol == toCol || fromRow == toRow) { 
-			return true;
+		String direction = "";
+		if(fromCol > toCol && fromRow == toRow) {
+			direction = "left";
+		} else if(toCol > fromCol && fromRow == toRow) {
+			direction = "right";
+		} else if(fromRow > toRow && fromCol == toCol) {
+			direction = "up";
+		} else if(toRow > fromRow && fromCol == toCol) {
+			direction = "down";
 		}
+		
+		if(direction != "") {
+			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
+	
+	
 	
 	public boolean canMoveBishop(int fromCol, int fromRow, int toCol, int toRow) {
 		if((toCol - fromCol == 2 || toCol - fromCol == -2) && (toRow - fromRow == 2 || toRow - fromRow == -2)) {
@@ -68,9 +60,69 @@ public class CChessBoard {
 	}
 	
 	public boolean canMoveCannon(int fromCol, int fromRow, int toCol, int toRow) {
-		if(fromCol == toCol || fromRow == toRow) { 
-			return true;
+		String direction = "";
+		if(fromCol > toCol && fromRow == toRow) {
+			direction = "left";
+		} else if(toCol > fromCol && fromRow == toRow) {
+			direction = "right";
+		} else if(fromRow > toRow && fromCol == toCol) {
+			direction = "up";
+		} else if(toRow > fromRow && fromCol == toCol) {
+			direction = "down";
 		}
+		
+		if(checkCapture(toCol, toRow)) {
+			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 1) { 
+				return true;
+			}
+		} else if(direction != "") {
+			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
+				return true;
+			}
+		}
+			
+		return false;
+		
+	}
+	
+	int piecesBetween(String direction, int fromCol, int fromRow, int toCol, int toRow) {
+		int piecesBetween = 0;
+		
+		
+		for(int i = 0; i < pieces.size(); i++) {
+			int pieceX = pieces.get(i).col;
+			int pieceY = pieces.get(i).row;
+			if(direction == "left") {
+				if((pieceX > toCol && pieceX < fromCol) && pieceY == toRow) {
+					piecesBetween++;
+				}
+			} else if(direction == "right") {
+				if((pieceX < toCol && pieceX > fromCol) && pieceY == toRow) {
+					piecesBetween++;
+				}
+			} else if(direction == "up") {
+				if((pieceY < fromRow && pieceY > toRow) && pieceX == toCol) {
+					piecesBetween++;
+				}
+			} else if(direction == "down") {
+				if((pieceY > fromRow && pieceY < toRow) && pieceX == toCol) {
+					piecesBetween++;
+				}
+			}
+		}
+		
+		return piecesBetween;
+	}
+	
+	
+	
+	boolean checkCapture(int toCol, int toRow) {
+		for(int i = 0; i < pieces.size(); i++) {
+			if(pieces.get(i).col == toCol && pieces.get(i).row == toRow) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
@@ -101,15 +153,61 @@ public class CChessBoard {
 	}
 	
 	public boolean canMoveKnight(int fromCol, int fromRow, int toCol, int toRow) {
-		if((fromCol - toCol == 2 && fromRow - toRow == 1) || (fromRow - toRow == 2 && fromCol - toCol == 1)) {
-			return true;
-		} else if((toCol - fromCol == 2 && fromRow - toRow == 1) || (fromRow - toRow == 2 && toCol - fromCol == 1)) {
-			return true;
-		} else if((toCol - fromCol == 2 && toRow - fromRow == 1) || (toRow - fromRow == 2 && toCol - fromCol == 1)) {
-			return true;
-		} else if((fromCol - toCol == 2 && toRow - fromRow == 1) || (fromRow - toRow == 2 && fromCol - toCol == 1)) {
-			return true;
+		
+		String direction = "";
+		
+		if(fromCol - toCol == 2 && fromRow - toRow == 1) {
+			direction = "left";
+		} else if(fromRow - toRow == 2 && fromCol - toCol == 1){
+			direction = "up";
+		} else if(toCol - fromCol == 2 && fromRow - toRow == 1) {
+			direction = "right";
+		} else if(fromRow - toRow == 2 && toCol - fromCol == 1){
+			direction = "up";
+		} else if(toCol - fromCol == 2 && toRow - fromRow == 1) {
+			direction = "right";
+		} else if(toRow - fromRow == 2 && toCol - fromCol == 1){
+			direction = "down";
+		} else if((fromCol - toCol == 2 && toRow - fromRow == 1)) {
+			direction = "left";
+		} else if(toRow - fromRow == 2 && fromCol - toCol == 1) {
+			direction = "down";
 		}
+		
+		if(direction != "") {
+			if(checkBlocking(direction, fromCol, fromRow)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean checkBlocking(String direction, int locationX, int locationY) {
+		int blockX = 0;
+		int blockY = 0;
+		
+		if(direction == "left") {
+			blockX = locationX - 1;
+			blockY = locationY;
+		} else if(direction == "right") {
+			blockX = locationX + 1;
+			blockY = locationY;
+		} else if(direction == "up") {
+			blockX = locationX;
+			blockY = locationY - 1;
+		} else if(direction == "down") {
+			blockX = locationX;
+			blockY = locationY + 1;
+		}
+		
+		for(int i = 0; i < pieces.size(); i++) {
+			if(pieces.get(i).col == blockX && pieces.get(i).row == blockY) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
@@ -128,73 +226,73 @@ public class CChessBoard {
 		
 		return false;
 	}
-	public void printBoard() {
-		
+	
+	@Override
+	public String toString() {
 		desc = "";
 		
-		System.out.print("   ");
+		desc += "  ";
+		
 		for(int col = 0; col < 9; col++) {
 			if(col == 8) {
-//				System.out.println(col + 1);
-				desc += (col + 1) + "\n";
+				desc += (col) + "\n";
 			} else {
-//				System.out.print((col + 1) + " ");
-				desc += (col + 1) + " ";
+				desc += (col) + " ";
 			}
 		}
 		
 		for(int row = 0; row < 10; row++) {
-			
-			if(row == 9) {
-//				System.out.print(row + 1 + " ");
-				desc += (row + 1) + " ";
-			} else {
-//				System.out.print(" " + (row + 1) + " ");
-				desc += " " + (row + 1) + " ";
-			}
-			
+			desc += row + " ";
 			for(int col = 0; col < 9; col++) {
 				
-				if(col == 8) {
-//					System.out.println(".");
-					
-					if(checkLocation(row * 9 + col)) {
-						desc += checkPiece(row * 9 + col) + ".\n";
-					} else {
-						desc += ".\n";
-					}
+				CChessPiece piece = pieceAt(col, row);
+				if(piece == null) {
+					desc += ". ";
 				} else {
-					if(checkLocation(row * 9 + col)) {
-						desc += checkPiece(row * 9 + col) + " ";
-					} else {
-//						System.out.print(". "); 
-						desc += ". ";
+					switch (piece.rank) {
+					
+					case rook:
+						desc += piece.isRed ? "R" : "r";
+						break;
+					case knight:
+						desc += piece.isRed ? "N" : "n";
+						break;
+					case bishop:
+						desc += piece.isRed ? "B" : "b";
+						break;
+					case guard:
+						desc += piece.isRed ? "G" : "g";
+						break;
+					case king:
+						desc += piece.isRed ? "K" : "k";
+						break;
+					case pawn:
+						desc += piece.isRed ? "P" : "p";
+						break;
+					case cannon:
+						desc += piece.isRed ? "C" : "c";
+						break;
 					}
 				}
-					
+				if(col == 8) {
+					desc += "\n";
+				}
 				
 			}
 		}
-		System.out.println(desc);
+		return desc;
 	}
 	
-	private boolean checkLocation(int location) {
-		for(int i = 0; i < pieceLocations.size(); i++) {
-			if(location == pieceLocations.get(i)) {
-				return true;
+	
+	
+	CChessPiece pieceAt(int locationCol, int locationRow) { 
+		for (CChessPiece piece : pieces) {
+			if(locationCol == piece.col && locationRow == piece.row) {
+				return piece;
 			}
 		}
 		
-		return false;
-	}
-	
-	private char checkPiece(int location) { 
-		CChessPiece piece = new CChessPiece(0,0,false,'0');
-		for(int i = 0; i < pieceLocations.size(); i++) {
-			if(location == pieceLocations.get(i)) piece = pieces.get(i);
-		}
-		
-		return piece.rank;
+		return null;
 	}
 	
 	

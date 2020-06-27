@@ -14,21 +14,176 @@ class CChessBoardTests {
 	@Test
 	void testRook() {
 		CChessBoard board = new CChessBoard();
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 f t . . . . . . . 
+			1 . . . . . . . . . 
+			2 . . . . . . . . . 
+			3 . . . . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
+		assertTrue(board.canMoveRook(0, 0, 1, 0)); 
 		
-		
-		assertTrue(board.canMoveRook(0, 0, 1, 0));
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 f . . . . . . . t
+			1 . . . . . . . . . 
+			2 . . . . . . . . . 
+			3 . . . . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
 		assertTrue(board.canMoveRook(0, 0, 8, 0));
+		
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 f . . . . . . . . 
+			1 . . . . . . . . . 
+			2 . . . . . . . . . 
+			3 . . t . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
 		assertFalse(board.canMoveRook(0, 0, 2, 3));
-
+		
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 f . . b . . t . . 
+			1 . . . . . . . . . 
+			2 . . . . . . . . . 
+			3 . . . . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook));
+		assertFalse(board.canMoveRook(0, 0, 6, 0));
 	}
 	
+	@Test
 	void testCannon() {
 		CChessBoard board = new CChessBoard();
 		
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 . . . . . . . . . 
+			1 . f t . . . . . . 
+			2 . . . . . . . . . 
+			3 . . . . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
 		assertTrue(board.canMoveCannon(1, 1, 2, 1));
-		assertTrue(board.canMoveCannon(1, 1, 1, 8));
+		
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 f . . b . . t . . 
+			1 . . . . . . . . . 
+			2 . . . . . . . . . 
+			3 . . . . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.bishop));
+		assertFalse(board.canMoveCannon(0, 0, 6, 0));
+		
+		/*
+		 *    0 1 2 3 4 5 6 7 8
+			0 . . . . . . . . . 
+			1 . . . . . . . . . 
+			2 . . . . . . . . . 
+			3 . . . . . . . . . 
+			4 . . . . . . . . . 
+			5 . . . . . . . . . 
+			6 . . . . . . . . . 
+			7 . . . . . . . . . 
+			8 . . . . . . . . . 
+		 */
 		assertFalse(board.canMoveCannon(1, 1, 2, 2));
+		
+//		    0 1 2 3 4 5 6 7 8
+//		  0 f . b b . . . t . 
+//		  1 . . . . . . . . . 
+//		  2 . . . . . . . . . 
+//		  3 . . . . . . . . . 
+//		  4 . . . . . . . . . 
+//		  5 . . . . . . . . . 
+//		  6 . . . . . . . . . 
+//		  7 . . . . . . . . . 
+//		  8 . . . . . . . . . 
+//		  9 . . . . . . . . . 
+		
 	}
+	
+	@Test
+	void testCannonBlocking() {
+		CChessBoard board = new CChessBoard();
+//  	0 1 2 3 4 5 6 7 8
+//	  0 f . b b . . . t . 
+//	  1 . . . . . . . . . 
+//	  2 . . . . . . . . . 
+//	  3 . . . . . . . . . 
+//	  4 . . . . . . . . . 
+//	  5 . . . . . . . . . 
+//	  6 . . . . . . . . . 
+//	  7 . . . . . . . . . 
+//	  8 . . . . . . . . . 
+//	  9 . . . . . . . . . 
+		
+	    board.pieces.add(new CChessPiece(0, 0, false, Rank.cannon));
+		board.pieces.add(new CChessPiece(2, 0, true, Rank.rook));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook));
+		board.pieces.add(new CChessPiece(7, 0, true, Rank.rook));
+		assertFalse(board.canMoveCannon(0, 0, 7, 0));
+		
+		assertTrue(board.canMoveCannon(0, 0, 3, 0));
+		
+		
+	}
+	
+	@Test
+	void testCannonCapturing() {
+		CChessBoard board = new CChessBoard();
+//  	0 1 2 3 4 5 6 7 8
+//	  0 f . b b . . . t . 
+//	  1 . . . . . . . . . 
+//	  2 . . . . . . . . . 
+//	  3 . . . . . . . . . 
+//	  4 . . . . . . . . . 
+//	  5 . . . . . . . . . 
+//	  6 . . . . . . . . . 
+//	  7 . . . . . . . . . 
+//	  8 . . . . . . . . . 
+//	  9 . . . . . . . . . 
+		
+	    board.pieces.add(new CChessPiece(0, 0, true, Rank.cannon));
+		board.pieces.add(new CChessPiece(2, 0, true, Rank.rook));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook));
+		board.pieces.add(new CChessPiece(7, 0, true, Rank.rook));
+		assertFalse(board.canMoveCannon(0, 0, 7, 0));
+		
+		assertFalse(board.canMoveCannon(0, 0, 3, 0));
+	}
+
+
 
 	@Test
 	void testBisop() {
@@ -67,5 +222,10 @@ class CChessBoardTests {
 		assertFalse(board.canMoveKing(4, 0, 3, 1));
 		assertFalse(board.canMoveKing(3, 1, 4, 3));
 		assertTrue(board.canMoveKing(4, 0, 4, 1));
+	}
+	
+	@Test
+	void testPiecesBetween() {
+		CChessBoard board = new CChessBoard();
 	}
 }
