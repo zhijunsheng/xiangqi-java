@@ -33,6 +33,7 @@ public class Game {
 	static int pieceSize = 67;
 	
 	public static void main(String args[]) throws IOException {
+		board.pieces.add(new CChessPiece(0, 0, true, Rank.rook));
 		System.out.println(board.toString());
 		
 		

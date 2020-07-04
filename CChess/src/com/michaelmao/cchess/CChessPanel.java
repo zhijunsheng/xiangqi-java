@@ -17,6 +17,8 @@ public class CChessPanel extends JPanel implements MouseListener {
 	private static int squareSize = 60;
     private static int boardX = 40;
     private static int boardY = 40;
+    
+    private Point fromColRow;
 	
 	CChessPanel() {
 		addMouseListener(this);
@@ -97,29 +99,33 @@ public class CChessPanel extends JPanel implements MouseListener {
 	}
 	
 	private void drawPieces(Graphics g) {
-	
-		for(int i  = 0; i < 5; i++) {
-			drawImage(g, Game.blackPawnImg, i * 2, 3);
-			drawImage(g, Game.redPawnImg, i * 2, 6);
-		}
 		
-		
-		for(int i = 0; i < 2; i++) {
-			drawImage(g, Game.blackRookImg, i * 8, 0);
-			drawImage(g, Game.blackKnightImg, i * 6 + 1, 0);
-			drawImage(g, Game.blackBishopImg, i * 4 + 2, 0);
-			drawImage(g, Game.blackGuardImg, i * 2 + 3, 0);
-			drawImage(g, Game.blackCannonImg, i * 6 + 1, 2);
-			
-			drawImage(g, Game.redRookImg, i * 8, 9);
-			drawImage(g, Game.redKnightImg, i * 6 + 1, 9);
-			drawImage(g, Game.redBishopImg, i * 4 + 2, 9);
-			drawImage(g, Game.redGuardImg, i * 2 + 3, 9);
-			drawImage(g, Game.redCannonImg, i * 6 + 1, 7);
-		}
-		
-		drawImage(g, Game.blackKingImg, 4, 0);
-		drawImage(g, Game.redKingImg, 4, 9);
+//		for (CChessPiece iterable_element : ) {
+//			
+//		}
+//	
+////		for(int i  = 0; i < 5; i++) {
+////			drawImage(g, Game.blackPawnImg, i * 2, 3);
+////			drawImage(g, Game.redPawnImg, i * 2, 6);
+////		}
+////		
+////		
+////		for(int i = 0; i < 2; i++) {
+////			drawImage(g, Game.blackRookImg, i * 8, 0);
+////			drawImage(g, Game.blackKnightImg, i * 6 + 1, 0);
+////			drawImage(g, Game.blackBishopImg, i * 4 + 2, 0);
+////			drawImage(g, Game.blackGuardImg, i * 2 + 3, 0);
+////			drawImage(g, Game.blackCannonImg, i * 6 + 1, 2);
+////			
+////			drawImage(g, Game.redRookImg, i * 8, 9);
+////			drawImage(g, Game.redKnightImg, i * 6 + 1, 9);
+////			drawImage(g, Game.redBishopImg, i * 4 + 2, 9);
+////			drawImage(g, Game.redGuardImg, i * 2 + 3, 9);
+////			drawImage(g, Game.redCannonImg, i * 6 + 1, 7);
+////		}
+//		
+//		drawImage(g, Game.blackKingImg, 4, 0);
+//		drawImage(g, Game.redKingImg, 4, 9);
 	}
 
 	@Override
@@ -131,36 +137,24 @@ public class CChessPanel extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		Point mouseLocation = e.getPoint();
-		int pieceX = (int)Math.round(mouseLocation.getX());
-		int pieceY = (int)Math.round(mouseLocation.getY());
-		
-		
-		System.out.print(gameLocation(true, pieceX));
-		System.out.print(gameLocation(false, pieceY));
+		fromColRow = xyToColRow(mouseLocation);
+		System.out.print("From " + xyToColRow(mouseLocation) + " to ");
 	}
 	
-	public int gameLocation(boolean isX, int location) {
-		int gameValue = 0;
-		int remainder = 0;
-		int boardMargin = 0;
-		if(isX) {
-			boardMargin = boardX;
-		} else {
-			boardMargin = boardY;
-		}
-		
-		remainder = (location - boardMargin) % squareSize;
-		gameValue = (int)Math.floor((location - boardMargin) / squareSize);
-		if(remainder > squareSize / 2) {
-			gameValue++;
-		}
-		
-		return gameValue;
+	private Point xyToColRow(Point xy) {
+		return new Point((xy.x - boardX + squareSize/2)/squareSize, (xy.y - boardY + squareSize/2)/squareSize);
+//		return new Point(((int)Math.floor(xy.getX()) - boardX) / squareSize  + ((int)Math.floor(xy.getX()) > squareSize / 2 ? 1 : 0) - 1, ((int)Math.floor(xy.getY()) - boardY) / squareSize + ((int)Math.floor(xy.getY()) > squareSize / 2 ? 1 : 0) - 1);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		Point mouseLocation = e.getPoint();		
 		
+		Point toColRow = xyToColRow(mouseLocation);
+		System.out.println(xyToColRow(mouseLocation));
+		Game.board.movePiece(fromColRow.x, fromColRow.y, toColRow.x, toColRow.y);
+		System.out.println(Game.board.toString());
+		repaint();
 	}
 
 	@Override

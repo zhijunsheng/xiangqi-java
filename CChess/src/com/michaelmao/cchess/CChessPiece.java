@@ -8,6 +8,7 @@ public class CChessPiece {
 	int row;
 	int col;
 	boolean isRed;
+	String imageName;
 	Rank rank;
 	
 	public CChessPiece(int col, int row, boolean isRed, Rank rank) {

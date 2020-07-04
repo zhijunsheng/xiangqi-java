@@ -1,22 +1,61 @@
 package com.michaelmao.cchess;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 enum MoveDirection {
 	left, right, up, down;
 }
 
 public class CChessBoard {
-	List<CChessPiece> pieces = new ArrayList<CChessPiece>();
+//	List<CChessPiece> pieces = new ArrayList<CChessPiece>();
+	Set<CChessPiece> pieces = new HashSet<>();
 
 	String desc = "";
 	
 	public void movePiece(int col, int row, int newCol, int newRow) {
+		CChessPiece movingPiece = pieceAt(col, row);
 		
+		if(movingPiece == null) {
+			return;
+		}
+		
+		if(canMovePiece(col, row, newCol, newRow, movingPiece.isRed)) {
+			pieces.remove(movingPiece);
+			pieces.add(new CChessPiece(newCol, newRow, movingPiece.isRed, movingPiece.rank));
+			System.out.println("Piece moved");
+		}
 	}
 	
-	public boolean canMoveRook(int fromCol, int fromRow, int toCol, int toRow) {
+	public boolean canMovePiece(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		CChessPiece movingPiece = pieceAt(fromCol, fromRow);
+		switch (movingPiece.rank) {
+		case rook:
+			return canMoveRook(fromCol, fromRow, toCol, toRow, isRed);
+		case knight:
+		case bishop:
+			break;
+		case guard:
+			break;
+		case king:
+			break;
+		case pawn:
+			break;
+		case cannon:
+			break;
+		}
+		return false;
+	}
+	
+	public boolean canMoveRook(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		for (CChessPiece piece : pieces) {
+			if(piece.col == toCol && piece.row == toRow && piece.isRed == isRed) {
+				return false;
+			}
+		}
+		
 		String direction = "";
 		if(fromCol > toCol && fromRow == toRow) {
 			direction = "left";
@@ -27,6 +66,7 @@ public class CChessBoard {
 		} else if(toRow > fromRow && fromCol == toCol) {
 			direction = "down";
 		}
+		
 		
 		if(direction != "") {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
@@ -59,7 +99,13 @@ public class CChessBoard {
 		return false;
 	}
 	
-	public boolean canMoveCannon(int fromCol, int fromRow, int toCol, int toRow) {
+	public boolean canMoveCannon(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		for (CChessPiece piece : pieces) {
+			if(piece.col == toCol && piece.row == toRow && piece.isRed == isRed) {
+				return false;
+			}
+		}
+		
 		String direction = "";
 		if(fromCol > toCol && fromRow == toRow) {
 			direction = "left";
@@ -71,7 +117,7 @@ public class CChessBoard {
 			direction = "down";
 		}
 		
-		if(checkCapture(toCol, toRow)) {
+		if(checkCapture(toCol, toRow, isRed)) {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 1) { 
 				return true;
 			}
@@ -88,10 +134,9 @@ public class CChessBoard {
 	int piecesBetween(String direction, int fromCol, int fromRow, int toCol, int toRow) {
 		int piecesBetween = 0;
 		
-		
-		for(int i = 0; i < pieces.size(); i++) {
-			int pieceX = pieces.get(i).col;
-			int pieceY = pieces.get(i).row;
+		for (CChessPiece piece : pieces) {
+			int pieceX = piece.col;
+			int pieceY = piece.row;
 			if(direction == "left") {
 				if((pieceX > toCol && pieceX < fromCol) && pieceY == toRow) {
 					piecesBetween++;
@@ -110,16 +155,20 @@ public class CChessBoard {
 				}
 			}
 		}
-		
+
 		return piecesBetween;
 	}
 	
 	
 	
-	boolean checkCapture(int toCol, int toRow) {
-		for(int i = 0; i < pieces.size(); i++) {
-			if(pieces.get(i).col == toCol && pieces.get(i).row == toRow) {
-				return true;
+	boolean checkCapture(int toCol, int toRow, boolean isRed) {
+		for (CChessPiece piece : pieces) {
+			if(piece.col == toCol && piece.row == toRow) {
+				if(isRed && !piece.isRed) {
+					return true;
+				} else if(!isRed && piece.isRed) {
+					return true;
+				}
 			}
 		}
 		
@@ -175,7 +224,7 @@ public class CChessBoard {
 		}
 		
 		if(direction != "") {
-			if(checkBlocking(direction, fromCol, fromRow)) {
+			if(checkBlockingKnight(direction, fromCol, fromRow)) {
 				return false;
 			} else {
 				return true;
@@ -184,7 +233,7 @@ public class CChessBoard {
 		return false;
 	}
 	
-	private boolean checkBlocking(String direction, int locationX, int locationY) {
+	private boolean checkBlockingKnight(String direction, int locationX, int locationY) {
 		int blockX = 0;
 		int blockY = 0;
 		
@@ -202,8 +251,8 @@ public class CChessBoard {
 			blockY = locationY + 1;
 		}
 		
-		for(int i = 0; i < pieces.size(); i++) {
-			if(pieces.get(i).col == blockX && pieces.get(i).row == blockY) {
+		for(CChessPiece piece: pieces) {
+			if(piece.col == blockX && piece.row == blockY) {
 				return true;
 			}
 		}
