@@ -80,7 +80,7 @@ class CChessBoardTests {
 			7 . . . . . . . . . 
 			8 . . . . . . . . . 
 		 */
-		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook, ""));
 		assertFalse(board.canMoveRook(0, 0, 6, 0, true));
 	}
 	
@@ -121,7 +121,7 @@ class CChessBoardTests {
 			7 . . . . . . . . . 
 			8 . . . . . . . . . 
 		 */
-		board.pieces.add(new CChessPiece(3, 0, true, Rank.bishop));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.bishop, ""));
 		assertFalse(board.canMoveCannon(0, 0, 6, 0, true));
 	}
 	
@@ -140,10 +140,10 @@ class CChessBoardTests {
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
 		
-	    board.pieces.add(new CChessPiece(0, 0, false, Rank.cannon));
-		board.pieces.add(new CChessPiece(2, 0, true, Rank.rook));
-		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook));
-		board.pieces.add(new CChessPiece(7, 0, true, Rank.rook));
+	    board.pieces.add(new CChessPiece(0, 0, false, Rank.cannon, ""));
+		board.pieces.add(new CChessPiece(2, 0, true, Rank.rook, ""));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook, ""));
+		board.pieces.add(new CChessPiece(7, 0, true, Rank.rook, ""));
 		assertFalse(board.canMoveCannon(0, 0, 7, 0, true));
 	}
 	
@@ -162,10 +162,10 @@ class CChessBoardTests {
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
 		
-	    board.pieces.add(new CChessPiece(0, 0, true, Rank.cannon));
-		board.pieces.add(new CChessPiece(2, 0, true, Rank.rook));
-		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook));
-		board.pieces.add(new CChessPiece(7, 0, true, Rank.rook));
+	    board.pieces.add(new CChessPiece(0, 0, true, Rank.cannon, ""));
+		board.pieces.add(new CChessPiece(2, 0, true, Rank.rook, ""));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.rook, ""));
+		board.pieces.add(new CChessPiece(7, 0, true, Rank.rook, ""));
 		assertFalse(board.canMoveCannon(0, 0, 7, 0, false));
 	}
 	
@@ -184,8 +184,8 @@ class CChessBoardTests {
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
 		
-		board.pieces.add(new CChessPiece(2, 0, false, Rank.bishop));
-		board.pieces.add(new CChessPiece(3, 0, true, Rank.bishop));
+		board.pieces.add(new CChessPiece(2, 0, false, Rank.bishop, ""));
+		board.pieces.add(new CChessPiece(3, 0, true, Rank.bishop, ""));
 		assertFalse(board.canMoveCannon(0, 0, 3, 0, true));
 		
 	}
@@ -207,7 +207,7 @@ class CChessBoardTests {
 //		  8 . . . . . . . . . 
 //		  9 . . . . . . . . . 
 
-		assertTrue(board.canMoveBishop(0, 0, 2, 2));
+		assertTrue(board.canMoveBishop(0, 0, 2, 2, true));
 	}
 	
 	@Test
@@ -224,7 +224,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveBishop(1, 2, 3, 4));
+		assertTrue(board.canMoveBishop(1, 2, 3, 4, true));
 	}
 	
 	@Test
@@ -241,7 +241,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveBishop(3, 3, 1, 1));
+		assertTrue(board.canMoveBishop(3, 3, 1, 1, true));
 	}
 	
 	@Test
@@ -258,7 +258,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveGuard(4, 1, 5, 2));
+		assertTrue(board.canMoveGuard(4, 1, 5, 2, true));
 	}
 	
 	@Test
@@ -275,7 +275,7 @@ class CChessBoardTests {
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
 		CChessBoard board = new CChessBoard();
-		assertTrue(board.canMoveGuard(3, 0, 4, 1));
+		assertTrue(board.canMoveGuard(3, 0, 4, 1, true));
 	}
 	
 	
@@ -327,7 +327,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveKnight(0, 0, 2, 1));
+		assertTrue(board.canMoveKnight(0, 0, 2, 1, true));
 
 	}
 	
@@ -345,7 +345,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveKnight(3, 3, 5, 2));
+		assertTrue(board.canMoveKnight(3, 3, 5, 2, true));
 	}
 	
 	@Test
@@ -362,7 +362,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveKnight(3, 3, 1, 4));
+		assertTrue(board.canMoveKnight(3, 3, 1, 4, true));
 	}
 	
 	@Test
@@ -379,7 +379,7 @@ class CChessBoardTests {
 //	  7 . . t . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertFalse(board.canMoveKnight(1, 1, 2, 7));
+		assertFalse(board.canMoveKnight(1, 1, 2, 7, true));
 	}
 	
 	@Test
@@ -396,7 +396,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertFalse(board.canMoveKing(4, 0, 3, 1));
+		assertFalse(board.canMoveKing(4, 0, 3, 1, true));
 	}
 	
 	@Test
@@ -413,7 +413,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertFalse(board.canMoveKing(3, 1, 4, 3));
+		assertFalse(board.canMoveKing(3, 1, 4, 3, true));
 	}
 	
 	@Test
@@ -430,7 +430,7 @@ class CChessBoardTests {
 //	  7 . . . . . . . . . 
 //	  8 . . . . . . . . . 
 //	  9 . . . . . . . . . 
-		assertTrue(board.canMoveKing(4, 0, 4, 1));
+		assertTrue(board.canMoveKing(4, 0, 4, 1, true));
 	}
 	
 	

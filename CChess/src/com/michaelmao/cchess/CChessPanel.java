@@ -6,7 +6,9 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 
@@ -126,6 +128,22 @@ public class CChessPanel extends JPanel implements MouseListener {
 //		
 //		drawImage(g, Game.blackKingImg, 4, 0);
 //		drawImage(g, Game.redKingImg, 4, 9);
+		
+		for (CChessPiece piece : Game.board.pieces) {
+			try {
+				drawImage(g, imgConverter(piece.imageName), piece.col, piece.row);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	static private Image imgConverter(String pngName) throws IOException{
+		File file = new File("C:\\Users\\michm\\git\\xiangqi-java\\CChess\\src\\com\\michaelmao\\cchess\\" + pngName + ".png");
+		return ImageIO.read(file);
+//		return ImageIO.read(file).getScaledInstance(pieceSize, pieceSize, Image.SCALE_SMOOTH);
 	}
 
 	@Override

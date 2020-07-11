@@ -11,10 +11,11 @@ public class CChessPiece {
 	String imageName;
 	Rank rank;
 	
-	public CChessPiece(int col, int row, boolean isRed, Rank rank) {
+	public CChessPiece(int col, int row, boolean isRed, Rank rank, String imageName) {
 		this.col = col;
 		this.row = row;
 		this.isRed = isRed;
 		this.rank = rank;
+		this.imageName = imageName;
 	}
 }
