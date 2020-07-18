@@ -5,14 +5,14 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
-public class CChessPanel extends JPanel implements MouseListener {
+public class CChessPanel extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -21,6 +21,13 @@ public class CChessPanel extends JPanel implements MouseListener {
     private static int boardY = 40;
     
     private Point fromColRow;
+        
+    private Point movingPieceXY = null;
+    
+    private CChessPiece movingPiece = null;
+    
+    // iOS: on screen we use CGFloat for coordinates (23.6, 78.0), Int for logical coordinates (3, 5)
+    // Swing: int, replace logical things with (col, row), (x, y)
 	
 	CChessPanel() {
 		addMouseListener(this);
@@ -31,6 +38,7 @@ public class CChessPanel extends JPanel implements MouseListener {
 		super.paintComponent(g);
 		drawBoard(g);
 		drawPieces(g);
+		this.addMouseMotionListener(this);
 	}
 	
 	private void drawBoard(Graphics g) {
@@ -69,7 +77,6 @@ public class CChessPanel extends JPanel implements MouseListener {
 				drawHalfArrow(g, true, (i - 1) * 6 + 1, 7);
 			}
 		}
-		
 	}
 	
 	private void drawHalfArrow(Graphics g, Boolean isLeft, int x, int y) {
@@ -86,7 +93,6 @@ public class CChessPanel extends JPanel implements MouseListener {
 			g.drawLine(actualX-size, actualY+size, actualX-size, actualY+size * 4);
 			
 		} else {
-			
 			//top
 			g.drawLine(actualX+size, actualY-size, actualX+size * 4, actualY-size);
 			g.drawLine(actualX+size, actualY-size, actualX+size, actualY-size * 4);
@@ -96,40 +102,15 @@ public class CChessPanel extends JPanel implements MouseListener {
 		}
 	}
 	
-	private void drawImage(Graphics g, Image img, int locationX, int locationY) {
-		g.drawImage(img, locationX * squareSize + boardX - Game.pieceSize / 2, locationY * squareSize + boardY - Game.pieceSize / 2, null);
+	private void drawImage(Graphics g, Image img, int locationCol, int locationRow) {
+		g.drawImage(img, locationCol * squareSize + boardX - Game.pieceSize / 2, locationRow * squareSize + boardY - Game.pieceSize / 2, null);
 	}
 	
 	private void drawPieces(Graphics g) {
-		
-//		for (CChessPiece iterable_element : ) {
-//			
-//		}
-//	
-////		for(int i  = 0; i < 5; i++) {
-////			drawImage(g, Game.blackPawnImg, i * 2, 3);
-////			drawImage(g, Game.redPawnImg, i * 2, 6);
-////		}
-////		
-////		
-////		for(int i = 0; i < 2; i++) {
-////			drawImage(g, Game.blackRookImg, i * 8, 0);
-////			drawImage(g, Game.blackKnightImg, i * 6 + 1, 0);
-////			drawImage(g, Game.blackBishopImg, i * 4 + 2, 0);
-////			drawImage(g, Game.blackGuardImg, i * 2 + 3, 0);
-////			drawImage(g, Game.blackCannonImg, i * 6 + 1, 2);
-////			
-////			drawImage(g, Game.redRookImg, i * 8, 9);
-////			drawImage(g, Game.redKnightImg, i * 6 + 1, 9);
-////			drawImage(g, Game.redBishopImg, i * 4 + 2, 9);
-////			drawImage(g, Game.redGuardImg, i * 2 + 3, 9);
-////			drawImage(g, Game.redCannonImg, i * 6 + 1, 7);
-////		}
-//		
-//		drawImage(g, Game.blackKingImg, 4, 0);
-//		drawImage(g, Game.redKingImg, 4, 9);
-		
 		for (CChessPiece piece : Game.board.pieces) {
+			if(movingPieceXY != null && piece.col == movingPiece.col && piece.row == movingPiece.row ) {
+				continue;
+			}
 			try {
 				drawImage(g, imgConverter(piece.imageName), piece.col, piece.row);
 			} catch (IOException e) {
@@ -138,6 +119,16 @@ public class CChessPanel extends JPanel implements MouseListener {
 			}
 		}
 		
+		if(movingPieceXY != null) {
+			try {
+				g.drawImage(imgConverter(movingPiece.imageName), movingPieceXY.x - Game.pieceSize / 2, movingPieceXY.y - Game.pieceSize / 2, null);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("null");
+		}
 	}
 	
 	static private Image imgConverter(String pngName) throws IOException{
@@ -157,6 +148,14 @@ public class CChessPanel extends JPanel implements MouseListener {
 		Point mouseLocation = e.getPoint();
 		fromColRow = xyToColRow(mouseLocation);
 		System.out.print("From " + xyToColRow(mouseLocation) + " to ");
+		String imgName = null;
+		for (CChessPiece piece : Game.board.pieces) {
+			if(piece.col == fromColRow.x && piece.row == fromColRow.y) {
+				imgName = piece.imageName;
+			}
+		}
+		if(imgName != null) movingPiece = Game.board.pieceAt(fromColRow.x, fromColRow.y);
+		
 	}
 	
 	private Point xyToColRow(Point xy) {
@@ -172,6 +171,10 @@ public class CChessPanel extends JPanel implements MouseListener {
 		System.out.println(xyToColRow(mouseLocation));
 		Game.board.movePiece(fromColRow.x, fromColRow.y, toColRow.x, toColRow.y);
 		System.out.println(Game.board.toString());
+		
+		movingPiece = null;
+		movingPieceXY = null;
+		
 		repaint();
 	}
 
@@ -183,6 +186,22 @@ public class CChessPanel extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		Point mouseLocation = e.getPoint();
+		Point mouseColRow  = xyToColRow(mouseLocation);
+		movingPiece.col = mouseColRow.x;
+		movingPiece.row = mouseColRow.y;
+		movingPieceXY = mouseLocation;
+		repaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}

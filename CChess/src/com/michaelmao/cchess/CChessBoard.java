@@ -2,6 +2,7 @@ package com.michaelmao.cchess;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,8 @@ public class CChessBoard {
 	}
 	
 	public boolean canMoveRook(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+		
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -69,16 +72,37 @@ public class CChessBoard {
 		
 		if(direction != "") {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
-				return true;
+				canMove = true;
 			}
 		}
 		
-		return false;
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		
+		return canMove;
+	}
+	
+	public void removePiece(int pieceCol, int pieceRow) {
+
+		CChessPiece capturedPiece = null;
+		for (CChessPiece piece : pieces) {
+			if(piece.col == pieceCol && piece.row == pieceRow) {
+				capturedPiece = piece;
+			}
+		}
+		if(capturedPiece != null) {
+			pieces.remove(capturedPiece);
+		}
 	}
 	
 	
 	
 	public boolean canMoveBishop(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -95,14 +119,22 @@ public class CChessBoard {
 			direction = "bl";
 		}
 		
+		
+		
 		if(direction != "") {
-			
 			if(!checkBlockingBishop(fromCol, fromRow, direction)) {
-				return true;
+				canMove =  true;
 			}
 		}
 		
-		return false;
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		
+		
+		return canMove;
 	}
 	
 	public boolean checkBlockingBishop(int fromCol, int fromRow, String direction) {
@@ -134,6 +166,8 @@ public class CChessBoard {
 	}
 	
 	public boolean canMoveGuard(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -141,15 +175,23 @@ public class CChessBoard {
 		if((toCol - fromCol == 1 || toCol - fromCol == -1) && (toRow - fromRow == 1 || toRow - fromRow == -1)) {
 			if(toCol > 2 &&  toCol < 6) {
 				if(toRow >= 0 && toRow < 3 || toRow > 6 && toRow <= 9) {
-					return true;
+					canMove = true;
 				}
 			}
 		}
 		
-		return false;
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		
+		return canMove;
 	}
 	
 	public boolean canMoveCannon(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -165,17 +207,23 @@ public class CChessBoard {
 			direction = "down";
 		}
 		
-		if(checkCapture(toCol, toRow, isRed)) {
+		if(checkCapture(toCol, toRow)) {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 1) { 
-				return true;
+				canMove =  true;
 			}
 		} else if(direction != "") {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
-				return true;
+				canMove = true;
+			}
+		}
+		
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
 			}
 		}
 			
-		return false;
+		return canMove;
 		
 	}
 	
@@ -209,7 +257,7 @@ public class CChessBoard {
 	
 	
 	
-	boolean checkCapture(int toCol, int toRow, boolean isRed) {
+	boolean checkCapture(int toCol, int toRow) {
 		for (CChessPiece piece : pieces) {
 			if(piece.col == toCol && piece.row == toRow) {
 				return true;
@@ -220,6 +268,8 @@ public class CChessBoard {
 	}
 	
 	public boolean canMovePawn(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -229,27 +279,35 @@ public class CChessBoard {
 			//red
 			if(fromRow < 5) {
 				if((fromCol == toCol && toRow == fromRow - 1) || (fromRow == toRow && (toCol == fromCol + 1 || toCol == fromCol - 1))) {
-					return true;
+					canMove = true;
 				}
 			} else if(fromCol == toCol && toRow == fromRow - 1) {
-				return true;
+				canMove = true;
 			}
 		} else {
 			
 			//black
 			if(fromRow > 4) {
 				if((fromCol == toCol && toRow == fromRow + 1) || (fromRow == toRow && (toCol == fromCol + 1 || toCol == fromCol - 1))) {
-					return true;
+					canMove = true;
 				}
 			} else if(fromCol == toCol && toRow == fromRow + 1) {
-				return true;
+				canMove = true;
 			}
 		}
 		
-		return false;
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		
+		return canMove;
 	}
 	
 	public boolean canMoveKnight(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -276,15 +334,22 @@ public class CChessBoard {
 		
 		if(direction != "") {
 			if(checkBlockingKnight(direction, fromCol, fromRow)) {
-				return false;
+				canMove = false;
 			} else {
-				return true;
+				canMove = true;
 			}
 		}
-		return false;
+		
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		return canMove;
 	}
 	
 	private boolean checkBlockingKnight(String direction, int locationX, int locationY) {
+		
 		int blockX = 0;
 		int blockY = 0;
 		
@@ -312,6 +377,8 @@ public class CChessBoard {
 	}
 	
 	public boolean canMoveKing(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		boolean canMove = false;
+
 		if(checkColour(toCol, toRow, isRed)) {
 			return false;
 		}
@@ -319,16 +386,22 @@ public class CChessBoard {
 		if((toCol > 2 && toCol < 6) && ((toRow >= 0 && toRow < 3) || (toRow > 6 && toRow < 10))) {
 			if((toCol - fromCol == 1 && toRow - fromRow == 1) || (toCol - fromCol == -1 && toRow - fromRow == -1) || (toCol - fromCol == -1 && toRow - fromRow == 1) || (toCol - fromCol == 1 && toRow - fromRow == -1)) {
 				if((fromCol == 4 && fromRow == 0) || (fromCol == 3 && fromRow == 1) || (fromCol == 4 && fromRow == 2) || (fromCol == 5 && fromRow == 1) || (fromCol == 4 && fromRow == 9) || (fromCol == 3 && fromRow == 8) || (fromCol == 4 && fromRow == 7) || (fromCol == 5 && fromRow == 8)) {                        
-					return false;
+					canMove = false;
 				} else {
-					return true;
+					canMove = true;
 				}
 			} else if((toCol - fromCol == 1 && toRow == fromRow) || (toCol - fromCol == -1 && toRow == fromRow) || (toCol == fromCol && toRow - fromRow == 1) || (toCol == fromCol && toRow - fromRow == -1)) {
-				return true;
+				canMove = true;
 			}
 		}
 		
-		return false;
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		
+		return canMove;
 	}
 	
 	public boolean checkColour(int toCol, int toRow, boolean isRed) {
