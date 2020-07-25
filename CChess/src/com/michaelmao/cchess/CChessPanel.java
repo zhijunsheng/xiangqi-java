@@ -21,10 +21,9 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
     private static int boardY = 40;
     
     private Point fromColRow;
-        
-    private Point movingPieceXY = null;
-    
+           
     private CChessPiece movingPiece = null;
+    private Point movingPieceColRow = null;
     
     // iOS: on screen we use CGFloat for coordinates (23.6, 78.0), Int for logical coordinates (3, 5)
     // Swing: int, replace logical things with (col, row), (x, y)
@@ -108,7 +107,7 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 	
 	private void drawPieces(Graphics g) {
 		for (CChessPiece piece : Game.board.pieces) {
-			if(movingPieceXY != null && piece.col == movingPiece.col && piece.row == movingPiece.row ) {
+			if(movingPiece != null && piece.col == movingPiece.col && piece.row == movingPiece.row ) {
 				continue;
 			}
 			try {
@@ -119,16 +118,16 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 			}
 		}
 		
-		if(movingPieceXY != null) {
+		if(movingPiece != null) {
 			try {
-				g.drawImage(imgConverter(movingPiece.imageName), movingPieceXY.x - Game.pieceSize / 2, movingPieceXY.y - Game.pieceSize / 2, null);
+				drawImage(g, imgConverter(movingPiece.imageName), movingPieceColRow.x, movingPieceColRow.y);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("null");
 		}
+		
 	}
 	
 	static private Image imgConverter(String pngName) throws IOException{
@@ -143,19 +142,16 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 		
 	}
 
-	@Override
+	@Override 
 	public void mousePressed(MouseEvent e) {
 		Point mouseLocation = e.getPoint();
 		fromColRow = xyToColRow(mouseLocation);
 		System.out.print("From " + xyToColRow(mouseLocation) + " to ");
-		String imgName = null;
 		for (CChessPiece piece : Game.board.pieces) {
 			if(piece.col == fromColRow.x && piece.row == fromColRow.y) {
-				imgName = piece.imageName;
+				movingPiece = new CChessPiece(piece.col, piece.row, piece.isRed, piece.rank, piece.imageName);
 			}
 		}
-		if(imgName != null) movingPiece = Game.board.pieceAt(fromColRow.x, fromColRow.y);
-		
 	}
 	
 	private Point xyToColRow(Point xy) {
@@ -165,7 +161,7 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		Point mouseLocation = e.getPoint();		
+		Point mouseLocation = e.getPoint();
 		
 		Point toColRow = xyToColRow(mouseLocation);
 		System.out.println(xyToColRow(mouseLocation));
@@ -173,8 +169,6 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 		System.out.println(Game.board.toString());
 		
 		movingPiece = null;
-		movingPieceXY = null;
-		
 		repaint();
 	}
 
@@ -194,9 +188,9 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 	public void mouseDragged(MouseEvent e) {
 		Point mouseLocation = e.getPoint();
 		Point mouseColRow  = xyToColRow(mouseLocation);
-		movingPiece.col = mouseColRow.x;
-		movingPiece.row = mouseColRow.y;
-		movingPieceXY = mouseLocation;
+		if(movingPiece != null) {
+			movingPieceColRow = new Point(mouseColRow.x, mouseColRow.y);
+		}
 		repaint();
 	}
 
