@@ -384,7 +384,7 @@ public class CChessBoard {
 		}
 		
 		for (CChessPiece piece : pieces) {
-			if(piece.col == fromCol && piece.row == fromRow) {
+			if(piece.rank == Rank.king) {
 				continue;
 			}
 			if(canMovePiece(piece.col, piece.row, toCol, toRow, piece.isRed)) {
