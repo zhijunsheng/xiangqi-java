@@ -23,7 +23,7 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
     private Point fromColRow;
            
     private CChessPiece movingPiece = null;
-    private Point movingPieceColRow = null;
+    private Point movingPieceXY = null;
     
     // iOS: on screen we use CGFloat for coordinates (23.6, 78.0), Int for logical coordinates (3, 5)
     // Swing: int, replace logical things with (col, row), (x, y)
@@ -120,7 +120,7 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 		
 		if(movingPiece != null) {
 			try {
-				drawImage(g, imgConverter(movingPiece.imageName), movingPieceColRow.x, movingPieceColRow.y);
+				g.drawImage(imgConverter(movingPiece.imageName), movingPieceXY.x - Game.pieceSize / 2, movingPieceXY.y - Game.pieceSize / 2, null);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -169,6 +169,7 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 		System.out.println(Game.board.toString());
 		
 		movingPiece = null;
+		movingPieceXY = null;
 		repaint();
 	}
 
@@ -187,9 +188,8 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		Point mouseLocation = e.getPoint();
-		Point mouseColRow  = xyToColRow(mouseLocation);
 		if(movingPiece != null) {
-			movingPieceColRow = new Point(mouseColRow.x, mouseColRow.y);
+			movingPieceXY = new Point(mouseLocation.x, mouseLocation.y);
 		}
 		repaint();
 	}

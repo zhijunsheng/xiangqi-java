@@ -383,6 +383,15 @@ public class CChessBoard {
 			return false;
 		}
 		
+		for (CChessPiece piece : pieces) {
+			if(piece.col == fromCol && piece.row == fromRow) {
+				continue;
+			}
+			if(canMovePiece(piece.col, piece.row, toCol, toRow, piece.isRed)) {
+				return false;
+			}
+		}
+		
 		if((toCol > 2 && toCol < 6) && ((toRow >= 0 && toRow < 3) || (toRow > 6 && toRow < 10))) {
 			if((toCol - fromCol == 1 && toRow - fromRow == 1) || (toCol - fromCol == -1 && toRow - fromRow == -1) || (toCol - fromCol == -1 && toRow - fromRow == 1) || (toCol - fromCol == 1 && toRow - fromRow == -1)) {
 				if((fromCol == 4 && fromRow == 0) || (fromCol == 3 && fromRow == 1) || (fromCol == 4 && fromRow == 2) || (fromCol == 5 && fromRow == 1) || (fromCol == 4 && fromRow == 9) || (fromCol == 3 && fromRow == 8) || (fromCol == 4 && fromRow == 7) || (fromCol == 5 && fromRow == 8)) {                        
