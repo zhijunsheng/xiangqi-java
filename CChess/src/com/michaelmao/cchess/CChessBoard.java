@@ -384,10 +384,19 @@ public class CChessBoard {
 		}
 		
 		for (CChessPiece piece : pieces) {
-			if(piece.rank == Rank.king) {
+			if((piece.col == fromCol  && piece.row == fromRow) || piece.isRed == isRed) { // It might not work
 				continue;
 			}
+			if(piece.rank == Rank.king) {
+				if(piece.col == toCol && piecesBetween(isRed ? "up" : "down", toCol, toRow, piece.col, piece.row) == 0) {
+					System.out.println("threat");
+					return false;
+				} else {
+					continue;
+				}
+			}
 			if(canMovePiece(piece.col, piece.row, toCol, toRow, piece.isRed)) {
+				System.out.println("threat detected");
 				return false;
 			}
 		}
