@@ -165,7 +165,7 @@ public class CChessPanel extends JPanel implements MouseListener, MouseMotionLis
 		
 		Point toColRow = xyToColRow(mouseLocation);
 		System.out.println(xyToColRow(mouseLocation));
-		Game.board.movePiece(fromColRow.x, fromColRow.y, toColRow.x, toColRow.y);
+		Game.board.movePiece(fromColRow.x, fromColRow.y, toColRow.x, toColRow.y, false);
 		System.out.println(Game.board.toString());
 		
 		movingPiece = null;

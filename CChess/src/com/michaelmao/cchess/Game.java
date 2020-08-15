@@ -1,10 +1,5 @@
 package com.michaelmao.cchess;
 
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Game {
@@ -13,7 +8,7 @@ public class Game {
 	
 	static int pieceSize = 67;
 	
-	public static void main(String args[]) throws IOException {
+	public static void main(String args[]) {
 		
 
 		for(int i  = 0; i < 5; i++) {
@@ -50,11 +45,7 @@ public class Game {
 			
 		}
 	
-	static private Image imgConverter(String pngName) throws IOException{
-		File file = new File("C:\\Users\\michm\\git\\xiangqi-java\\CChess\\src\\com\\michaelmao\\cchess\\" + pngName + ".png");
-		return ImageIO.read(file);
-//		return ImageIO.read(file).getScaledInstance(pieceSize, pieceSize, Image.SCALE_SMOOTH);
-	}
+	
 	
 
 	

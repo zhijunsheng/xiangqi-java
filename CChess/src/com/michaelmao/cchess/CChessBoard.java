@@ -1,5 +1,6 @@
 package com.michaelmao.cchess;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,39 +17,62 @@ public class CChessBoard {
 
 	String desc = "";
 	
-	public void movePiece(int col, int row, int newCol, int newRow) {
+	public void movePiece(int col, int row, int newCol, int newRow, boolean testMove) {
 		CChessPiece movingPiece = pieceAt(col, row);
 		
 		if(movingPiece == null) {
 			return;
 		}
 		
-		if(canMovePiece(col, row, newCol, newRow, movingPiece.isRed)) {
+		if(!testMove) {
+			if(canMovePiece(col, row, newCol, newRow, movingPiece.isRed)) {
+				pieces.remove(movingPiece);
+				pieces.add(new CChessPiece(newCol, newRow, movingPiece.isRed, movingPiece.rank, movingPiece.imageName));
+				System.out.println("Piece moved");
+			}
+		} else {
 			pieces.remove(movingPiece);
 			pieces.add(new CChessPiece(newCol, newRow, movingPiece.isRed, movingPiece.rank, movingPiece.imageName));
-			System.out.println("Piece moved");
+			System.out.println("Test move");
 		}
 	}
 	
 	public boolean canMovePiece(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
+		
 		CChessPiece movingPiece = pieceAt(fromCol, fromRow);
+		boolean canMove = false;
 		switch (movingPiece.rank) {
 		case rook:
-			return canMoveRook(fromCol, fromRow, toCol, toRow, isRed);
+			System.out.println("rook");
+			canMove = canMoveRook(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		case knight:
-			return canMoveKnight(fromCol, fromRow, toCol, toRow, isRed);
+			canMove = canMoveKnight(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		case bishop:
-			return canMoveBishop(fromCol, fromRow, toCol, toRow, isRed);
+			canMove = canMoveBishop(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		case guard:
-			return canMoveGuard(fromCol, fromRow, toCol, toRow, isRed);
+			canMove = canMoveGuard(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		case king:
-			return canMoveKing(fromCol, fromRow, toCol, toRow, isRed);
+			canMove = canMoveKing(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		case pawn:
-			return canMovePawn(fromCol, fromRow, toCol, toRow, isRed);
+			canMove = canMovePawn(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		case cannon:
-			return canMoveCannon(fromCol, fromRow, toCol, toRow, isRed);
+			canMove = canMoveCannon(fromCol, fromRow, toCol, toRow, isRed);
+			break;
 		}
-		return false;
+		
+		if(canMove) {
+			if(checkCapture(toCol, toRow)) {
+				removePiece(toCol, toRow);
+			}
+		}
+		
+		return canMove;
 	}
 	
 	public boolean canMoveRook(int fromCol, int fromRow, int toCol, int toRow, boolean isRed) {
@@ -69,7 +93,6 @@ public class CChessBoard {
 			direction = "down";
 		}
 		
-		
 		if(direction != "") {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
 				canMove = true;
@@ -77,10 +100,25 @@ public class CChessBoard {
 		}
 		
 		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
+			CChessPiece king = kingColRow(isRed);
+			movePiece(fromCol, fromRow, toCol, toRow, true);
+			System.out.println(king.col + " " + king.row);
+			for (CChessPiece piece : pieces) {
+				if(piece.isRed == isRed) {
+					continue;
+				}
+				if(canMovePiece(piece.col, piece.row, king.col, king.row, piece.isRed)) {
+					System.out.println("no");
+					movePiece(toCol, toRow, fromCol, fromRow, true);
+					return false;
+				} else {
+//					movePiece(toCol, toRow, fromCol, fromRow, true);
+					return true;
+				}
+				
 			}
 		}
+		
 		
 		return canMove;
 	}
@@ -124,12 +162,6 @@ public class CChessBoard {
 		if(direction != "") {
 			if(!checkBlockingBishop(fromCol, fromRow, direction)) {
 				canMove =  true;
-			}
-		}
-		
-		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
 			}
 		}
 		
@@ -180,12 +212,6 @@ public class CChessBoard {
 			}
 		}
 		
-		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
-			}
-		}
-		
 		return canMove;
 	}
 	
@@ -214,12 +240,6 @@ public class CChessBoard {
 		} else if(direction != "") {
 			if(piecesBetween(direction, fromCol, fromRow, toCol, toRow) == 0) {
 				canMove = true;
-			}
-		}
-		
-		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
 			}
 		}
 			
@@ -296,12 +316,6 @@ public class CChessBoard {
 			}
 		}
 		
-		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
-			}
-		}
-		
 		return canMove;
 	}
 	
@@ -340,11 +354,6 @@ public class CChessBoard {
 			}
 		}
 		
-		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
-			}
-		}
 		return canMove;
 	}
 	
@@ -384,19 +393,17 @@ public class CChessBoard {
 		}
 		
 		for (CChessPiece piece : pieces) {
-			if((piece.col == fromCol  && piece.row == fromRow) || piece.isRed == isRed) { // It might not work
+			if(piece.isRed == isRed) { // It might not work
 				continue;
 			}
 			if(piece.rank == Rank.king) {
 				if(piece.col == toCol && piecesBetween(isRed ? "up" : "down", toCol, toRow, piece.col, piece.row) == 0) {
-					System.out.println("threat");
 					return false;
 				} else {
 					continue;
 				}
 			}
 			if(canMovePiece(piece.col, piece.row, toCol, toRow, piece.isRed)) {
-				System.out.println("threat detected");
 				return false;
 			}
 		}
@@ -413,13 +420,17 @@ public class CChessBoard {
 			}
 		}
 		
-		if(canMove) {
-			if(checkCapture(toCol, toRow)) {
-				removePiece(toCol, toRow);
+		return canMove;
+	}
+	
+	public CChessPiece kingColRow(boolean isRed) {
+		for (CChessPiece piece : pieces) {
+			if(piece.rank == Rank.king && piece.isRed == isRed) {
+				return piece;
 			}
 		}
 		
-		return canMove;
+		return null;
 	}
 	
 	public boolean checkColour(int toCol, int toRow, boolean isRed) {
